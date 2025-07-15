@@ -32,12 +32,6 @@ export default function SimplePage() {
   const [summaries, setSummaries] = useState<Record<number, string>>({});
   const [loadingSummaryId, setLoadingSummaryId] = useState<number | null>(null);
 
-  // 원본 HTML의 키워드 기반 AI 분류 로직 -> Gemini API로 대체하므로 삭제
-  // const classifyOpinionTopic = (text: string): string => { ... };
-
-  // 실시간 주제 예측 -> 제출 시점에만 예측하므로 삭제
-  // useEffect(() => { ... });
-
   // 컴포넌트 마운트 확인
   useEffect(() => {
     setMounted(true);
@@ -91,30 +85,26 @@ export default function SimplePage() {
       }
       finalTopic = selectedTopic;
     } else {
-      setIsSubmitting(true);
-      try {
-        const response = await fetch('/api/gemini', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ task: 'classify', content: opinionContent }),
-        });
+        setIsSubmitting(true);
+        try {
+            const response = await fetch('/api/gemini', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ task: 'classify', content: opinionContent }),
+            });
 
-        if (!response.ok) {
-          throw new Error('API 요청 실패');
+            if (!response.ok) throw new Error('API 요청 실패');
+
+            const data = await response.json();
+            finalTopic = data.result.trim();
+        } catch (error) {
+            console.error('주제 분류 중 오류 발생:', error);
+            alert('AI 주제 분류 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+            setIsSubmitting(false);
+            return;
+        } finally {
+            setIsSubmitting(false);
         }
-
-        const data = await response.json();
-        finalTopic = data.result.trim();
-      } catch (error) {
-        console.error('주제 분류 중 오류 발생:', error);
-        alert('AI 주제 분류 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
-        setIsSubmitting(false);
-        return;
-      } finally {
-        setIsSubmitting(false);
-      }
     }
     
     const newOpinion: Opinion = {
@@ -510,8 +500,8 @@ export default function SimplePage() {
                       </div>
                     )}
                   </div>
-                ))}
-              </div>
+                ))
+              )}
             </div>
           </div>
         </section>
