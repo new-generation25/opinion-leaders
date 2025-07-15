@@ -37,9 +37,6 @@ export async function POST(req: NextRequest) {
             }
             prompt = `다음은 여러 사용자들이 제출한 의견 목록입니다. 이 의견들을 분석하여 1~2개의 핵심 주제를 추출하고, 각 주제에 대한 간결한 설명을 덧붙여주세요. 결과는 JSON 형식으로 반환해주세요. (예: {"themes": [{"theme": "주제1", "description": "설명1"}, {"theme": "주제2", "description": "설명2"}]})\n\n의견 목록:\n${content.map((c: any) => `- ${c.content}`).join('\n')}`;
             break;
-        case 'summarize':
-            prompt = `다음 의견을 한 문장으로 간결하게 요약해주세요:\n\n"${content}"`;
-            break;
         default:
             return NextResponse.json({ error: '유효하지 않은 task입니다.' }, { status: 400 });
 

@@ -29,8 +29,7 @@ export default function SimplePage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSummaryLoading, setIsSummaryLoading] = useState(false);
   const [aiSummaryContent, setAiSummaryContent] = useState<any>(null);
-  const [summaries, setSummaries] = useState<Record<number, string>>({});
-  const [loadingSummaryId, setLoadingSummaryId] = useState<number | null>(null);
+  const [expandedPostIts, setExpandedPostIts] = useState<Set<number>>(new Set());
 
   // 컴포넌트 마운트 확인
   useEffect(() => {
@@ -191,33 +190,16 @@ export default function SimplePage() {
     }
   };
 
-  const handleSummarize = async (opinion: Opinion) => {
-    if (summaries[opinion.id]) {
-      // 이미 요약이 있으면 토글 (보였다 안보였다)
-      const newSummaries = { ...summaries };
-      delete newSummaries[opinion.id];
-      setSummaries(newSummaries);
-      return;
-    }
-
-    setLoadingSummaryId(opinion.id);
-    try {
-      const response = await fetch('/api/gemini', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ task: 'summarize', content: opinion.content }),
-      });
-
-      if (!response.ok) throw new Error('요약 생성 실패');
-
-      const data = await response.json();
-      setSummaries(prev => ({ ...prev, [opinion.id]: data.result }));
-    } catch (error) {
-      console.error(error);
-      alert('의견 요약 중 오류가 발생했습니다.');
-    } finally {
-      setLoadingSummaryId(null);
-    }
+  const toggleExpandPostIt = (id: number) => {
+    setExpandedPostIts(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
   };
 
   // 컴포넌트가 마운트되지 않았으면 로딩 상태 표시
@@ -473,34 +455,34 @@ export default function SimplePage() {
                   첫 번째 의견을 작성해보세요!
                 </div>
               ) : (
-                filteredOpinions.map((opinion) => (
-                  <div key={opinion.id} className={`post-it topic-${opinion.topic.toLowerCase()}`}>
-                    <div className="post-it-header">
-                      <span className="post-it-topic">{opinion.topic}</span>
-                    </div>
-                    <div className="post-it-content">
-                      <p>{opinion.content}</p>
-                    </div>
-                    <div className="post-it-footer">
-                      <span>{opinion.author}</span>
-                      <span>{new Date(opinion.timestamp).toLocaleDateString()}</span>
-                    </div>
-                    <div className="post-it-actions">
-                      <button 
-                        onClick={() => handleSummarize(opinion)} 
-                        className="summarize-btn-small"
-                        disabled={loadingSummaryId === opinion.id}
-                      >
-                        {loadingSummaryId === opinion.id ? '요약 중...' : (summaries[opinion.id] ? '요약 닫기' : '요약 보기')}
-                      </button>
-                    </div>
-                    {summaries[opinion.id] && (
-                      <div className="opinion-summary">
-                        <strong>AI 요약:</strong> {summaries[opinion.id]}
+                filteredOpinions.map((opinion) => {
+                  const isExpanded = expandedPostIts.has(opinion.id);
+                  const isLongContent = opinion.content.length > 120;
+
+                  return (
+                    <div key={opinion.id} className={`post-it topic-${opinion.topic.toLowerCase()}`}>
+                      <div className="post-it-header">
+                        <span className="post-it-topic">{opinion.topic}</span>
                       </div>
-                    )}
-                  </div>
-                ))
+                      <div
+                        className={`post-it-content ${isLongContent ? 'expandable' : ''}`}
+                        onClick={() => isLongContent && toggleExpandPostIt(opinion.id)}
+                      >
+                        <p>
+                          {isLongContent && !isExpanded
+                            ? `${opinion.content.substring(0, 120)}...`
+                            : opinion.content}
+                        </p>
+                        {isLongContent && (
+                          <span className="expand-indicator">{isExpanded ? '접기' : '더보기'}</span>
+                        )}
+                      </div>
+                      <div className="post-it-footer">
+                        <span>{opinion.author}</span>
+                      </div>
+                    </div>
+                  );
+                })
               )}
             </div>
           </div>
