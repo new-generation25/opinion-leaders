@@ -26,52 +26,17 @@ export default function SimplePage() {
   const [showAISummary, setShowAISummary] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSummaryLoading, setIsSummaryLoading] = useState(false);
+  const [aiSummaryContent, setAiSummaryContent] = useState<any>(null);
+  const [summaries, setSummaries] = useState<Record<number, string>>({});
+  const [loadingSummaryId, setLoadingSummaryId] = useState<number | null>(null);
 
-  // 원본 HTML의 키워드 기반 AI 분류 로직
-  const classifyOpinionTopic = (text: string): string => {
-    const lowerText = text.toLowerCase();
-    
-    const topicKeywords = {
-      '교육': ['교육', '학교', '대학', '학생', '선생님', '교사', '학습', '공부', '교과서', '시험', '입시', '수업', '강의', '학원', '교직'],
-      '환경': ['환경', '기후', '온난화', '공해', '오염', '재활용', '에너지', '태양광', '친환경', '탄소', '미세먼지', '자연', '생태', '숲', '바다'],
-      '경제': ['경제', '돈', '세금', '금리', '주식', '투자', '부동산', '물가', '인플레이션', '일자리', '취업', '임금', '연금', '예산', '재정'],
-      '기술': ['기술', '인공지능', 'AI', '컴퓨터', '소프트웨어', '앱', '프로그램', '디지털', '인터넷', '스마트폰', '로봇', '자동화', '빅데이터'],
-      '정치': ['정치', '정부', '대통령', '국회', '의원', '선거', '투표', '정당', '정책', '법', '제도', '행정', '공무원', '민주주의'],
-      '사회': ['사회', '복지', '의료', '건강', '병원', '안전', '범죄', '교통', '주거', '결혼', '출산', '육아', '노인', '청년', '여성'],
-      '문화': ['문화', '예술', '음악', '영화', '드라마', '책', '문학', '전시', '공연', '축제', '여행', '스포츠', '게임', '엔터테인먼트']
-    };
-    
-    let maxScore = 0;
-    let predictedTopic = '기타';
-    
-    for (const [topic, keywords] of Object.entries(topicKeywords)) {
-      let score = 0;
-      keywords.forEach(keyword => {
-        const regex = new RegExp(keyword, 'gi');
-        const matches = text.match(regex);
-        if (matches) {
-          score += matches.length;
-        }
-      });
-      
-      if (score > maxScore) {
-        maxScore = score;
-        predictedTopic = topic;
-      }
-    }
-    
-    return predictedTopic;
-  };
+  // 원본 HTML의 키워드 기반 AI 분류 로직 -> Gemini API로 대체하므로 삭제
+  // const classifyOpinionTopic = (text: string): string => { ... };
 
-  // 실시간 주제 예측
-  useEffect(() => {
-    if (topicMode === 'auto' && opinionContent.length > 10) {
-      const predicted = classifyOpinionTopic(opinionContent);
-      setPredictedTopic(predicted);
-    } else {
-      setPredictedTopic('');
-    }
-  }, [opinionContent, topicMode]);
+  // 실시간 주제 예측 -> 제출 시점에만 예측하므로 삭제
+  // useEffect(() => { ... });
 
   // 컴포넌트 마운트 확인
   useEffect(() => {
@@ -115,7 +80,7 @@ export default function SimplePage() {
     }
   }, [mounted]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     let finalTopic;
@@ -126,7 +91,30 @@ export default function SimplePage() {
       }
       finalTopic = selectedTopic;
     } else {
-      finalTopic = classifyOpinionTopic(opinionContent);
+      setIsSubmitting(true);
+      try {
+        const response = await fetch('/api/gemini', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ task: 'classify', content: opinionContent }),
+        });
+
+        if (!response.ok) {
+          throw new Error('API 요청 실패');
+        }
+
+        const data = await response.json();
+        finalTopic = data.result.trim();
+      } catch (error) {
+        console.error('주제 분류 중 오류 발생:', error);
+        alert('AI 주제 분류 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+        setIsSubmitting(false);
+        return;
+      } finally {
+        setIsSubmitting(false);
+      }
     }
     
     const newOpinion: Opinion = {
@@ -178,13 +166,68 @@ export default function SimplePage() {
   const groupedOpinions = groupOpinionsByTopic(filteredOpinions);
 
   // AI 요약 생성
-  const generateAISummary = () => {
+  const generateAISummary = async () => {
     if (opinions.length === 0) {
       alert('요약할 의견이 없습니다. 먼저 의견을 제출해주세요.');
       return;
     }
+
+    setIsSummaryLoading(true);
+    setAiSummaryContent(null);
     setShowAISummary(true);
-    document.getElementById('aiSummary')?.scrollIntoView({ behavior: 'smooth' });
+    
+    try {
+        const response = await fetch('/api/gemini', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ task: 'extractThemes', content: opinions }),
+        });
+
+        if (!response.ok) throw new Error('AI 요약 생성에 실패했습니다.');
+
+        const data = await response.json();
+        // Gemini가 반환한 JSON 문자열을 실제 JSON 객체로 파싱
+        const summaryData = JSON.parse(data.result.replace(/```json\n?/, '').replace(/```$/, ''));
+        setAiSummaryContent(summaryData);
+
+    } catch (error) {
+        console.error(error);
+        alert('AI 요약 생성 중 오류가 발생했습니다.');
+        setShowAISummary(false);
+    } finally {
+        setIsSummaryLoading(false);
+        // 요약 섹션으로 스크롤
+        setTimeout(() => document.getElementById('aiSummary')?.scrollIntoView({ behavior: 'smooth' }), 100);
+    }
+  };
+
+  const handleSummarize = async (opinion: Opinion) => {
+    if (summaries[opinion.id]) {
+      // 이미 요약이 있으면 토글 (보였다 안보였다)
+      const newSummaries = { ...summaries };
+      delete newSummaries[opinion.id];
+      setSummaries(newSummaries);
+      return;
+    }
+
+    setLoadingSummaryId(opinion.id);
+    try {
+      const response = await fetch('/api/gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ task: 'summarize', content: opinion.content }),
+      });
+
+      if (!response.ok) throw new Error('요약 생성 실패');
+
+      const data = await response.json();
+      setSummaries(prev => ({ ...prev, [opinion.id]: data.result }));
+    } catch (error) {
+      console.error(error);
+      alert('의견 요약 중 오류가 발생했습니다.');
+    } finally {
+      setLoadingSummaryId(null);
+    }
   };
 
   // 컴포넌트가 마운트되지 않았으면 로딩 상태 표시
@@ -348,9 +391,11 @@ export default function SimplePage() {
                   />
                 </div>
 
-                <button type="submit" className="submit-btn">
-                  의견 제출
-                </button>
+                <div className="form-group submit-group">
+                  <button type="submit" className="submit-btn" disabled={isSubmitting}>
+                    {isSubmitting ? 'AI 분석 중...' : '의견 제출'}
+                  </button>
+                </div>
               </form>
             </div>
           </div>
@@ -388,12 +433,22 @@ export default function SimplePage() {
               <div id="aiSummary" className="ai-summary">
                 <h3>AI 종합 요약</h3>
                 <div id="summaryContent">
-                  <div>
-                    <h4>전체 요약</h4>
-                    <p><strong>총 의견 수:</strong> {opinions.length}개</p>
-                    <p><strong>다뤄진 주제:</strong> {Object.keys(groupedOpinions).length}개</p>
-                    <p><strong>전체적인 분위기:</strong> 다양한 관점</p>
-                  </div>
+                  {isSummaryLoading ? (
+                    <div className="loading-spinner-small">AI가 핵심 주제를 분석 중입니다...</div>
+                  ) : aiSummaryContent && aiSummaryContent.themes ? (
+                    <div>
+                      <h4>핵심 주제</h4>
+                      <ul>
+                        {aiSummaryContent.themes.map((theme: any, index: number) => (
+                          <li key={index}>
+                            <strong>{theme.theme}:</strong> {theme.description}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : (
+                    <p>요약 내용을 불러오는 데 실패했습니다.</p>
+                  )}
                 </div>
               </div>
             )}
@@ -429,13 +484,34 @@ export default function SimplePage() {
                 </div>
               ) : (
                 filteredOpinions.map((opinion) => (
-                  <div key={opinion.id} className="postit">
-                    <div className="postit-topic">{opinion.topic}</div>
-                    <div className="postit-content">{opinion.content}</div>
-                    <div className="postit-author">- {opinion.author}</div>
+                  <div key={opinion.id} className={`post-it topic-${opinion.topic.toLowerCase()}`}>
+                    <div className="post-it-header">
+                      <span className="post-it-topic">{opinion.topic}</span>
+                    </div>
+                    <div className="post-it-content">
+                      <p>{opinion.content}</p>
+                    </div>
+                    <div className="post-it-footer">
+                      <span>{opinion.author}</span>
+                      <span>{new Date(opinion.timestamp).toLocaleDateString()}</span>
+                    </div>
+                    <div className="post-it-actions">
+                      <button 
+                        onClick={() => handleSummarize(opinion)} 
+                        className="summarize-btn-small"
+                        disabled={loadingSummaryId === opinion.id}
+                      >
+                        {loadingSummaryId === opinion.id ? '요약 중...' : (summaries[opinion.id] ? '요약 닫기' : '요약 보기')}
+                      </button>
+                    </div>
+                    {summaries[opinion.id] && (
+                      <div className="opinion-summary">
+                        <strong>AI 요약:</strong> {summaries[opinion.id]}
+                      </div>
+                    )}
                   </div>
-                ))
-              )}
+                ))}
+              </div>
             </div>
           </div>
         </section>
