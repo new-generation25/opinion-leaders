@@ -794,8 +794,7 @@ html {
     top: 0;
     left: 0;
     right: 0;
-    background: rgba(108, 99, 255, 0.95);
-    backdrop-filter: blur(10px);
+    background: white;
     padding: 10px 0;
     z-index: 1000;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -812,11 +811,36 @@ html {
   .logo h1 {
     font-size: 1.5rem;
     margin: 0;
-    color: white;
+    color: #2c3e50;
   }
   
   .nav-menu {
-    display: none; /* 메뉴는 기본적으로 숨김 */
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    align-items: center;
+  }
+  
+  .nav-menu li {
+    list-style: none;
+  }
+  
+  .nav-menu li:not(.auth-nav) {
+    display: none; /* 홈, 의견제출, 대시보드 등 메뉴는 모바일에서 숨김 */
+  }
+  
+  .nav-menu a {
+    color: #2c3e50 !important;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 0.85rem;
+    padding: 4px 6px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .nav-menu a:hover {
+    background-color: #f8f9fa;
   }
   
   .auth-nav {
@@ -831,7 +855,8 @@ html {
   }
   
   .user-name {
-    background: rgba(255, 255, 255, 0.2);
+    background: #f8f9fa;
+    color: #2c3e50;
     padding: 4px 8px;
     border-radius: 12px;
     font-size: 0.8rem;
