@@ -187,6 +187,15 @@ export default function SimplePage() {
     document.getElementById('aiSummary')?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // 컴포넌트가 마운트되지 않았으면 로딩 상태 표시
+  if (!mounted) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner">로딩 중...</div>
+      </div>
+    );
+  }
+
   return (
     <div>
       {/* 네비게이션 */}
@@ -452,35 +461,12 @@ export default function SimplePage() {
           </div>
         </section>
 
-        {/* Services 섹션 */}
-        <section id="services" className="services">
-          <div className="container">
-            <h2>서비스</h2>
-            <div className="service-grid">
-              <div className="service-card">
-                <h3>콘텐츠 제작</h3>
-                <p>전문적인 콘텐츠 제작 및 배포 서비스를 제공합니다.</p>
-              </div>
-              <div className="service-card">
-                <h3>컨설팅</h3>
-                <p>개인 브랜딩 및 온라인 영향력 확대를 위한 전문 컨설팅입니다.</p>
-              </div>
-              <div className="service-card">
-                <h3>커뮤니티</h3>
-                <p>오피니언 리더들을 위한 전용 커뮤니티를 운영합니다.</p>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* Contact 섹션 */}
         <section id="contact" className="contact">
           <div className="container">
             <h2>연락처</h2>
             <div className="contact-info">
               <p>Email: contact@opinion-leader.com</p>
-              <p>Phone: +82-2-1234-5678</p>
-              <p>Address: 서울특별시 강남구 테헤란로 123</p>
             </div>
           </div>
         </section>

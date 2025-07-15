@@ -41,14 +41,24 @@ NAVER_CLIENT_SECRET=your-naver-client-secret
 
 ### 4. OAuth 설정
 
+⚠️ **중요**: 소셜 로그인은 실제 OAuth 설정이 완료되어야 작동합니다. 로컬 환경에서 테스트하려면 아래 단계를 따라 설정해주세요.
+
 #### Google OAuth 설정
 1. [Google Cloud Console](https://console.cloud.google.com/)에서 프로젝트 생성
 2. "APIs & Services" > "Credentials"에서 OAuth 2.0 Client ID 생성
 3. 승인된 리디렉션 URI에 `http://localhost:3000/api/auth/callback/google` 추가
+4. 클라이언트 ID와 시크릿을 `.env.local`의 `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`에 입력
 
 #### 네이버 OAuth 설정
 1. [네이버 개발자센터](https://developers.naver.com/)에서 애플리케이션 등록
 2. Callback URL에 `http://localhost:3000/api/auth/callback/naver` 추가
+3. 클라이언트 ID와 시크릿을 `.env.local`의 `NAVER_CLIENT_ID`, `NAVER_CLIENT_SECRET`에 입력
+
+#### 로컬 환경에서 테스트 없이 사용하기
+OAuth 설정 없이 기본 기능만 테스트하려면:
+- 환경변수를 설정하지 않고 실행
+- "로그인" 버튼 클릭 시 에러가 발생하지만 기본 기능은 작동
+- 의견 제출, 포스트잇 보드 등 다른 기능은 정상 작동
 
 ### 5. 개발 서버 실행
 ```bash
