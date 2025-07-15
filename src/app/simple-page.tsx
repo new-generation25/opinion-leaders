@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 
 interface Opinion {
@@ -14,7 +13,6 @@ interface Opinion {
 }
 
 export default function SimplePage() {
-  const { data: session, status } = useSession();
   const router = useRouter();
   const [opinions, setOpinions] = useState<Opinion[]>([]);
   const [topicMode, setTopicMode] = useState<'manual' | 'auto'>('manual');
@@ -227,18 +225,10 @@ export default function SimplePage() {
               <li><a href="#about">소개</a></li>
               <li><a href="#contact">연락처</a></li>
               <li className="auth-nav">
-                {session ? (
-                  <div className="user-menu">
-                    <span className="user-name">{session.user?.name}</span>
-                    <button onClick={() => signOut()} className="logout-btn">
-                      로그아웃
-                    </button>
-                  </div>
-                ) : (
-                  <button onClick={() => router.push('/auth/signin')} className="login-btn">
-                    로그인
-                  </button>
-                )}
+                {/* Removed session and status checks */}
+                <button onClick={() => router.push('/auth/signin')} className="login-btn">
+                  로그인
+                </button>
               </li>
             </ul>
           </div>
@@ -254,14 +244,12 @@ export default function SimplePage() {
             <button 
               className="cta-button"
               onClick={() => {
-                if (session) {
-                  document.getElementById('opinion')?.scrollIntoView({ behavior: 'smooth' });
-                } else {
-                  router.push('/auth/signin');
-                }
+                // Removed session check
+                document.getElementById('opinion')?.scrollIntoView({ behavior: 'smooth' });
               }}
             >
-              {session ? '의견 제출하기' : '시작하기'}
+              {/* Removed session check */}
+              의견 제출하기
             </button>
           </div>
         </section>
