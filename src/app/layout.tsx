@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import AuthSessionProvider from '@/components/SessionProvider';
 
 export const metadata: Metadata = {
   title: 'Opinion Leader - 오피니언 리더',
@@ -13,7 +14,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <body>{children}</body>
+      <body>
+        <AuthSessionProvider>
+          {children}
+        </AuthSessionProvider>
+      </body>
     </html>
   );
 } 

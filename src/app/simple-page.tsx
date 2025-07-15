@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useSession, signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 interface Opinion {
   id: number;
@@ -12,6 +14,8 @@ interface Opinion {
 }
 
 export default function SimplePage() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
   const [opinions, setOpinions] = useState<Opinion[]>([]);
   const [topicMode, setTopicMode] = useState<'manual' | 'auto'>('manual');
   const [selectedTopic, setSelectedTopic] = useState('');
@@ -21,6 +25,7 @@ export default function SimplePage() {
   const [topicFilter, setTopicFilter] = useState('');
   const [showAISummary, setShowAISummary] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   // 원본 HTML의 키워드 기반 AI 분류 로직
   const classifyOpinionTopic = (text: string): string => {
@@ -68,8 +73,15 @@ export default function SimplePage() {
     }
   }, [opinionContent, topicMode]);
 
+  // 컴포넌트 마운트 확인
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // localStorage에서 데이터 로드
   useEffect(() => {
+    if (!mounted) return;
+    
     const savedOpinions = localStorage.getItem('opinions');
     if (savedOpinions) {
       setOpinions(JSON.parse(savedOpinions));
@@ -101,7 +113,7 @@ export default function SimplePage() {
       setOpinions(dummyOpinions);
       localStorage.setItem('opinions', JSON.stringify(dummyOpinions));
     }
-  }, []);
+  }, [mounted]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -190,6 +202,20 @@ export default function SimplePage() {
               <li><a href="#dashboard">의견 대시보드</a></li>
               <li><a href="#about">소개</a></li>
               <li><a href="#contact">연락처</a></li>
+              <li className="auth-nav">
+                {session ? (
+                  <div className="user-menu">
+                    <span className="user-name">{session.user?.name}</span>
+                    <button onClick={() => signOut()} className="logout-btn">
+                      로그아웃
+                    </button>
+                  </div>
+                ) : (
+                  <button onClick={() => router.push('/auth/signin')} className="login-btn">
+                    로그인
+                  </button>
+                )}
+              </li>
             </ul>
           </div>
         </nav>
@@ -203,9 +229,15 @@ export default function SimplePage() {
             <p>Opinion Leader와 함께 영향력 있는 의견을 나누고, 변화를 이끌어나가세요.</p>
             <button 
               className="cta-button"
-              onClick={() => document.getElementById('opinion')?.scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => {
+                if (session) {
+                  document.getElementById('opinion')?.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                  router.push('/auth/signin');
+                }
+              }}
             >
-              시작하기
+              {session ? '의견 제출하기' : '시작하기'}
             </button>
           </div>
         </section>
