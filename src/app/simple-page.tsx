@@ -20,6 +20,7 @@ export default function SimplePage() {
   const [predictedTopic, setPredictedTopic] = useState('');
   const [topicFilter, setTopicFilter] = useState('');
   const [showAISummary, setShowAISummary] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   // 원본 HTML의 키워드 기반 AI 분류 로직
   const classifyOpinionTopic = (text: string): string => {
@@ -134,7 +135,13 @@ export default function SimplePage() {
     setAuthor('');
     setSelectedTopic('');
     
-    alert('의견이 성공적으로 제출되었습니다!');
+    // 성공 모달 표시
+    setShowSuccessModal(true);
+    
+    // 3초 후 자동으로 모달 숨기기
+    setTimeout(() => {
+      setShowSuccessModal(false);
+    }, 3000);
     
     // 대시보드로 스크롤
     document.getElementById('dashboard')?.scrollIntoView({ behavior: 'smooth' });
@@ -452,6 +459,23 @@ export default function SimplePage() {
           <p>&copy; 2025 Opinion Leader. All rights reserved.</p>
         </div>
       </footer>
+
+      {/* 성공 메시지 모달 */}
+      {showSuccessModal && (
+        <div className="modal-overlay">
+          <div className="success-modal">
+            <div className="success-icon">✅</div>
+            <h3>의견 제출 완료!</h3>
+            <p>의견이 성공적으로 제출되었습니다.</p>
+            <button 
+              onClick={() => setShowSuccessModal(false)}
+              className="confirm-btn"
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 } 
