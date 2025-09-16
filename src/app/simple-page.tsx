@@ -31,6 +31,22 @@ export default function SimplePage() {
   const [expandedPostIts, setExpandedPostIts] = useState<Set<number>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
 
+  // 마크다운을 HTML로 변환하는 함수
+  const parseMarkdownToHTML = (markdown: string) => {
+    return markdown
+      // 제목 처리 (# ## ###)
+      .replace(/^### (.+)$/gm, '<h4 class="summary-h4">$1</h4>')
+      .replace(/^## (.+)$/gm, '<h3 class="summary-h3">$1</h3>')
+      .replace(/^# (.+)$/gm, '<h2 class="summary-h2">$1</h2>')
+      // 구분선 처리
+      .replace(/^---$/gm, '<hr class="summary-divider" />')
+      // 리스트 항목 처리
+      .replace(/^- (.+)$/gm, '<div class="summary-item">• $1</div>')
+      // 줄바꿈 처리
+      .replace(/\n\n/g, '<br><br>')
+      .replace(/\n/g, '<br>');
+  };
+
   // 컴포넌트 마운트 확인
   useEffect(() => {
     setMounted(true);
@@ -514,18 +530,19 @@ ${data.result ? data.result.substring(0, 200) + '...' : '응답 없음'}`
             {/* AI 요약 섹션 */}
             {showAISummary && (
               <div id="aiSummary" className="ai-summary">
-                <h3>AI 종합 요약</h3>
+                <h3>정책제안 AI 요약</h3>
                 <div id="summaryContent">
             {isSummaryLoading ? (
               <div className="loading-spinner-small">AI가 정책제안을 분석 중입니다...</div>
             ) : aiSummaryContent ? (
               <div className="ai-summary-content">
                 {aiSummaryContent.summary ? (
-                  <div className="structured-summary">
-                    <pre style={{whiteSpace: 'pre-wrap', fontFamily: 'inherit', margin: 0}}>
-                      {aiSummaryContent.summary}
-                    </pre>
-                  </div>
+                  <div 
+                    className="structured-summary"
+                    dangerouslySetInnerHTML={{
+                      __html: parseMarkdownToHTML(aiSummaryContent.summary)
+                    }}
+                  />
                 ) : aiSummaryContent.themes ? (
                   <div>
                     <h4>핵심 주제</h4>
