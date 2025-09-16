@@ -582,8 +582,27 @@ ${data && data.result && typeof data.result === 'string' ? data.result.substring
               </select>
             </div>
 
-
-
+            {/* 주제별 그룹 */}
+            <div className="topic-groups">
+              {Object.entries(groupedOpinions).map(([topic, topicOpinions]) => (
+                <div key={topic} className="topic-group">
+                  <h3>
+                    {topic}
+                    <span className="topic-count">{topicOpinions.length}</span>
+                  </h3>
+                  <div className="topic-summary">
+                    {topicOpinions.slice(0, 3).map((opinion) => (
+                      <p key={opinion.id}>
+                        <strong>{opinion.author}:</strong> {opinion.content.substring(0, 100)}...
+                      </p>
+                    ))}
+                    {topicOpinions.length > 3 && (
+                      <p><em>외 {topicOpinions.length - 3}개 의견</em></p>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
 
             {/* 포스트잇 표시 모드 토글 */}
             <div className="postit-controls">
@@ -761,6 +780,14 @@ ${data && data.result && typeof data.result === 'string' ? data.result.substring
               )}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* AI 요약 다시보기 플로팅 버튼 */}
+      {!showAIPopup && aiSummaryContent && (
+        <div className="floating-ai-button" onClick={reopenAIPopup}>
+          <span className="floating-ai-icon">🤖</span>
+          <span className="floating-ai-text">AI<br/>요약</span>
         </div>
       )}
 

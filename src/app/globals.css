@@ -1279,4 +1279,60 @@ html {
     padding: 1rem;
     max-height: 70vh;
   }
+}
+
+/* AI 요약 다시보기 플로팅 버튼 */
+.floating-ai-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #3498db, #2980b9);
+  border-radius: 50%;
+  box-shadow: 0 4px 20px rgba(52, 152, 219, 0.4);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1500;
+  transition: all 0.3s ease;
+  border: 3px solid white;
+}
+
+.floating-ai-button:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 25px rgba(52, 152, 219, 0.6);
+}
+
+.floating-ai-icon {
+  font-size: 1.2rem;
+  margin-bottom: 2px;
+}
+
+.floating-ai-text {
+  font-size: 0.6rem;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  line-height: 0.7;
+}
+
+/* 모바일에서 더 큰 터치 영역 */
+@media (max-width: 768px) {
+  .floating-ai-button {
+    width: 70px;
+    height: 70px;
+    bottom: 15px;
+    right: 15px;
+  }
+  
+  .floating-ai-icon {
+    font-size: 1.4rem;
+  }
+  
+  .floating-ai-text {
+    font-size: 0.7rem;
+  }
 } 
