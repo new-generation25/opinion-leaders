@@ -239,23 +239,65 @@ export default function SimplePage() {
         const data = await response.json();
         // Gemini가 반환한 JSON 문자열을 실제 JSON 객체로 파싱
         try {
-          // 마크다운 코드 블록 제거
-          let cleanResult = data.result.replace(/```json\n?/, '').replace(/```$/, '').trim();
-          // 추가 정리: 앞뒤 공백, 개행문자 제거
-          cleanResult = cleanResult.replace(/^\s+|\s+$/g, '');
-          const summaryData = JSON.parse(cleanResult);
+          console.log('원본 Gemini 응답:', data.result);
+          
+          // 다양한 마크다운 형식 제거
+          let cleanResult = data.result
+            .replace(/```json\s*/g, '')  // ```json 시작
+            .replace(/```\s*/g, '')      // ``` 끝
+            .replace(/^json\s*/gm, '')   // 라인 시작의 json
+            .trim();
+          
+          console.log('정리된 응답:', cleanResult);
+          
+          // JSON 파싱 시도
+          let summaryData;
+          try {
+            summaryData = JSON.parse(cleanResult);
+          } catch (firstParseError) {
+            // JSON이 아닐 경우 기본 구조로 변환
+            console.warn('JSON 파싱 실패, 기본 응답으로 처리:', firstParseError);
+            summaryData = {
+              themes: [
+                {
+                  theme: "AI 분석 결과",
+                  description: cleanResult.substring(0, 200) + "..."
+                }
+              ]
+            };
+          }
+          
           setAiSummaryContent(summaryData);
         } catch (parseError) {
-          console.error('JSON 파싱 오류:', parseError);
+          console.error('전체 파싱 오류:', parseError);
           console.error('원본 응답:', data.result);
-          throw new Error('AI 응답을 파싱하는 중 오류가 발생했습니다.');
+          
+          // 최종 폴백: 기본 응답 표시
+          setAiSummaryContent({
+            themes: [
+              {
+                theme: "분석 중 오류 발생",
+                description: "AI 응답을 처리하는 중 문제가 발생했습니다. 다시 시도해주세요."
+              }
+            ]
+          });
         }
 
     } catch (error) {
         console.error('AI 요약 생성 오류:', error);
-        const errorMessage = error instanceof Error ? error.message : 'AI 요약 생성 중 오류가 발생했습니다.';
-        alert(`AI 요약 생성 실패: ${errorMessage}\n\nGemini API 키가 설정되었는지 확인해주세요.`);
-        setShowAISummary(false);
+        
+        // 에러 발생 시에도 기본 내용 표시
+        setAiSummaryContent({
+          themes: [
+            {
+              theme: "연결 오류",
+              description: "AI 서비스에 연결할 수 없습니다. 잠시 후 다시 시도해주세요."
+            }
+          ]
+        });
+        
+        // 에러 메시지는 콘솔에만 표시하고 사용자에게는 부드러운 경험 제공
+        console.warn('AI 요약 생성 실패, 기본 메시지 표시');
     } finally {
         setIsSummaryLoading(false);
         // 요약 섹션으로 스크롤
