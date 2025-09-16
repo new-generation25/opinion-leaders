@@ -31,6 +31,8 @@ export default function SimplePage() {
   const [expandedPostIts, setExpandedPostIts] = useState<Set<number>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
   const [postItDisplayMode, setPostItDisplayMode] = useState<'mixed' | 'grouped'>('mixed');
+  const [showAIPopup, setShowAIPopup] = useState(false);
+  const [popupPosition, setPopupPosition] = useState<'center' | 'left' | 'right'>('center');
 
   // 카테고리별 색상 매핑
   const getCategoryColor = (topic: string) => {
@@ -265,7 +267,7 @@ export default function SimplePage() {
 
   const groupedOpinions = groupOpinionsByTopic(filteredOpinions);
 
-  // AI 요약 생성
+  // AI 요약 생성 (팝업 방식)
   const generateAISummary = async () => {
     if (opinions.length === 0) {
       alert('요약할 의견이 없습니다. 먼저 의견을 제출해주세요.');
@@ -274,7 +276,8 @@ export default function SimplePage() {
 
     setIsSummaryLoading(true);
     setAiSummaryContent(null);
-    setShowAISummary(true);
+    setShowAIPopup(true);
+    setPopupPosition('center');
     
     try {
         const response = await fetch('/api/gemini', {
@@ -357,8 +360,25 @@ ${data && data.result && typeof data.result === 'string' ? data.result.substring
         console.warn('AI 요약 생성 실패, 기본 메시지 표시');
     } finally {
         setIsSummaryLoading(false);
-        // 요약 섹션으로 스크롤
-        setTimeout(() => document.getElementById('aiSummary')?.scrollIntoView({ behavior: 'smooth' }), 100);
+    }
+  };
+
+  // 팝업 닫기 (슬라이드 효과)
+  const closeAIPopup = () => {
+    setPopupPosition('right'); // 오른쪽으로 슬라이드
+    setTimeout(() => {
+      setShowAIPopup(false);
+      setPopupPosition('center');
+    }, 300); // 애니메이션 시간
+  };
+
+  // 팝업 다시 열기
+  const reopenAIPopup = () => {
+    if (aiSummaryContent) {
+      setShowAIPopup(true);
+      setPopupPosition('center');
+    } else {
+      generateAISummary();
     }
   };
 
@@ -542,7 +562,7 @@ ${data && data.result && typeof data.result === 'string' ? data.result.substring
 
             {/* 대시보드 컨트롤 */}
             <div className="dashboard-controls">
-              <button onClick={generateAISummary} className="summary-btn">
+              <button onClick={reopenAIPopup} className="summary-btn">
                 AI 종합 요약 생성
               </button>
               <select
@@ -562,46 +582,6 @@ ${data && data.result && typeof data.result === 'string' ? data.result.substring
               </select>
             </div>
 
-            {/* AI 요약 섹션 */}
-            {showAISummary && (
-              <div id="aiSummary" className="ai-summary">
-                <h3>정책제안 AI 요약</h3>
-                <div id="summaryContent">
-            {isSummaryLoading ? (
-              <div className="loading-spinner-small">AI가 정책제안을 분석 중입니다. 잠시만 기다려주세요.</div>
-            ) : aiSummaryContent ? (
-              <div className="ai-summary-content">
-                {aiSummaryContent.summary ? (
-                  <div 
-                    className="structured-summary"
-                    dangerouslySetInnerHTML={{
-                      __html: parseMarkdownToHTML(aiSummaryContent.summary)
-                    }}
-                  />
-                ) : aiSummaryContent.themes ? (
-                  <div>
-                    <h4>핵심 주제</h4>
-                    <ul>
-                      {aiSummaryContent.themes.map((theme: any, index: number) => (
-                        <li key={index}>
-                          <strong>{theme.theme}:</strong> {theme.description}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ) : (
-                  <div>
-                    <h4>분석 결과</h4>
-                    <p>{JSON.stringify(aiSummaryContent, null, 2)}</p>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <p>요약 내용을 불러오는 데 실패했습니다.</p>
-            )}
-                </div>
-              </div>
-            )}
 
             {/* 포스트잇 표시 모드 토글 */}
             <div className="postit-controls">
@@ -757,6 +737,52 @@ ${data && data.result && typeof data.result === 'string' ? data.result.substring
           </div>
         </section>
       </main>
+
+      {/* AI 요약 팝업 */}
+      {showAIPopup && (
+        <div className="popup-overlay">
+          <div className={`ai-popup ai-popup-${popupPosition}`}>
+            <div className="popup-header">
+              <h3>정책제안 AI 요약</h3>
+              <button onClick={closeAIPopup} className="popup-close">×</button>
+            </div>
+            <div className="popup-content">
+              {isSummaryLoading ? (
+                <div className="loading-spinner-small">AI가 정책제안을 분석 중입니다. 잠시만 기다려주세요.</div>
+              ) : aiSummaryContent ? (
+                <div className="ai-summary-content">
+                  {aiSummaryContent.summary ? (
+                    <div 
+                      className="structured-summary"
+                      dangerouslySetInnerHTML={{
+                        __html: parseMarkdownToHTML(aiSummaryContent.summary)
+                      }}
+                    />
+                  ) : aiSummaryContent.themes ? (
+                    <div>
+                      <h4>핵심 주제</h4>
+                      <ul>
+                        {aiSummaryContent.themes.map((theme: any, index: number) => (
+                          <li key={index}>
+                            <strong>{theme.theme}:</strong> {theme.description}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : (
+                    <div>
+                      <h4>분석 결과</h4>
+                      <p>{JSON.stringify(aiSummaryContent, null, 2)}</p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p>요약 내용을 불러오는 데 실패했습니다.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       <footer>
         <div className="container">
