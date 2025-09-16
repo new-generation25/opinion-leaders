@@ -34,16 +34,18 @@ export default function SimplePage() {
   // 마크다운을 HTML로 변환하는 함수
   const parseMarkdownToHTML = (markdown: string) => {
     return markdown
-      // 제목 처리 (# ## ###)
+      // 큰 제목 삭제 (지역문화 활동가의 정책제안 요약 등)
+      .replace(/^# .+$/gm, '')
+      // 제목 처리 (## ###만 처리)
       .replace(/^### (.+)$/gm, '<h4 class="summary-h4">$1</h4>')
       .replace(/^## (.+)$/gm, '<h3 class="summary-h3">$1</h3>')
-      .replace(/^# (.+)$/gm, '<h2 class="summary-h2">$1</h2>')
       // 구분선 처리
       .replace(/^---$/gm, '<hr class="summary-divider" />')
-      // 리스트 항목 처리
-      .replace(/^- (.+)$/gm, '<div class="summary-item">• $1</div>')
-      // 줄바꿈 처리
-      .replace(/\n\n/g, '<br><br>')
+      // 리스트 항목 처리 (•를 제거하고 CSS로 처리)
+      .replace(/^- (.+)$/gm, '<div class="summary-item">$1</div>')
+      // 연속된 줄바꿈 정리
+      .replace(/\n{3,}/g, '\n\n')
+      .replace(/\n\n/g, '<div class="summary-break"></div>')
       .replace(/\n/g, '<br>');
   };
 

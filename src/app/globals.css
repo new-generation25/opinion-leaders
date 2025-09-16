@@ -1021,7 +1021,7 @@ html {
 
 /* AI 요약 출력 형식 스타일링 */
 .structured-summary {
-  line-height: 1.6;
+  line-height: 1.4;
   color: #333;
   background: #f8f9fa;
   padding: 1.5rem;
@@ -1029,20 +1029,11 @@ html {
   border-left: 4px solid #3498db;
 }
 
-.structured-summary .summary-h2 {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #2c3e50;
-  margin: 1.5rem 0 1rem 0;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid #3498db;
-}
-
 .structured-summary .summary-h3 {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   font-weight: bold;
   color: #34495e;
-  margin: 1.2rem 0 0.8rem 0;
+  margin: 0.8rem 0 0.4rem 0;
   padding-left: 0.5rem;
   border-left: 3px solid #e74c3c;
 }
@@ -1051,34 +1042,37 @@ html {
   font-size: 1.1rem;
   font-weight: bold;
   color: #2980b9;
-  margin: 1rem 0 0.5rem 0;
-  padding: 0.5rem;
+  margin: 0.6rem 0 0.3rem 0;
+  padding: 0.4rem;
   background: #ecf0f1;
   border-radius: 4px;
 }
 
 .structured-summary .summary-divider {
   border: none;
-  height: 2px;
+  height: 1px;
   background: linear-gradient(90deg, #3498db, #e74c3c);
-  margin: 1rem 0;
+  margin: 0.5rem 0;
   border-radius: 1px;
 }
 
 .structured-summary .summary-item {
-  margin: 0.5rem 0 0.5rem 1rem;
-  padding: 0.3rem 0;
+  margin: 0.3rem 0 0.3rem 1rem;
+  padding: 0.2rem 0;
   color: #555;
   position: relative;
+  display: block;
 }
 
 .structured-summary .summary-item:before {
-  content: '';
+  content: '•';
   position: absolute;
   left: -1rem;
-  top: 0.7rem;
-  width: 6px;
-  height: 6px;
-  background: #3498db;
-  border-radius: 50%;
+  top: 0.2rem;
+  color: #3498db;
+  font-weight: bold;
+}
+
+.structured-summary .summary-break {
+  height: 0.5rem;
 } 
