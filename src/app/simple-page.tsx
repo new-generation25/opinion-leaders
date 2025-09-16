@@ -37,23 +37,27 @@ export default function SimplePage() {
       return '';
     }
     
+    console.log('파싱할 마크다운:', markdown); // 디버깅용
+    
     try {
-      return markdown
-        // 모든 제목 삭제 (# ## ### 모두) - 더 안전한 정규식
-        .replace(/^#{1,6}\s+.+$/gm, '')
-        // 중간 제목만 처리 (##)
+      let result = markdown
+        // 중간 제목 처리 (##) - 큰 제목은 삭제하지 않음
         .replace(/^##\s+(.+)$/gm, '<h3 class="summary-h3">$1</h3>')
-        // 소제목 처리 (###)
+        // 소제목 처리 (###)  
         .replace(/^###\s+(.+)$/gm, '<h4 class="summary-h4">$1</h4>')
-        // 구분선은 카테고리 사이에만
+        // 구분선 처리
         .replace(/^-{3,}$/gm, '<hr class="summary-divider" />')
         // 리스트 항목 처리
         .replace(/^-\s+(.+)$/gm, '<div class="summary-item">$1</div>')
-        // 불필요한 "의견 목록:" 섹션 제거 - 더 안전한 방식
+        // 불필요한 "의견 목록:" 섹션 제거
         .replace(/의견\s*목록\s*:[\s\S]*$/i, '')
-        // 연속된 줄바꿈 최소화
+        // 줄바꿈 처리
         .replace(/\n{3,}/g, '\n\n')
+        .replace(/\n\n/g, '<div class="summary-break"></div>')
         .replace(/\n/g, '<br>');
+      
+      console.log('파싱 결과:', result); // 디버깅용
+      return result;
     } catch (error) {
       console.error('마크다운 파싱 오류:', error);
       return markdown; // 원본 반환
