@@ -900,7 +900,14 @@ ${data && data.result && typeof data.result === 'string' ? data.result.substring
                         ? `${opinion.content.substring(0, 50)}...` 
                         : opinion.content}
                     </td>
-                    <td>{new Date(opinion.timestamp).toLocaleDateString()}</td>
+                    <td>{new Date(opinion.timestamp).toLocaleString('ko-KR', {
+                      year: 'numeric',
+                      month: '2-digit',
+                      day: '2-digit',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: false
+                    })}</td>
                     <td>
                       <button 
                         onClick={() => deleteOpinion(opinion.id)}
