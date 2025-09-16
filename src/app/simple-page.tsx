@@ -410,10 +410,11 @@ ${data && data.result && typeof data.result === 'string' ? data.result.substring
         <nav className="navbar">
           <div className="nav-container">
             <div className="logo">
-              <h1>지역문화 활동가 정책제안</h1>
+              <h1>
+                <a href="#home" className="logo-link">지역문화 활동가 정책제안</a>
+              </h1>
             </div>
             <ul className="nav-menu">
-              <li><a href="#home">홈</a></li>
               <li><a href="#opinion">의견 제출</a></li>
               <li><a href="#dashboard">의견 대시보드</a></li>
               <li><a href="#about">소개</a></li>
@@ -712,15 +713,15 @@ ${data && data.result && typeof data.result === 'string' ? data.result.substring
             <div className="features">
               <div className="feature">
                 <h3>의견 공유</h3>
-                <p>다양한 주제에 대한 전문적인 의견을 공유하고 토론할 수 있습니다.</p>
+                <p> 대한 전문적인 의견을 공유하고 토론하도록 돕습니다.</p>
               </div>
               <div className="feature">
                 <h3>네트워킹</h3>
-                <p>같은 관심사를 가진 전문가들과 연결되어 네트워크를 확장하세요.</p>
+                <p>같은 관심사를 가진 전문가들과 연결되록 네트워크 확장을 돕습니다다.</p>
               </div>
               <div className="feature">
                 <h3>영향력 확대</h3>
-                <p>당신의 전문성을 바탕으로 사회에 긍정적인 영향을 미치세요.</p>
+                <p>당신의 전문성을 발휘하여 사회에 긍정적인 영향을 미치세요.</p>
               </div>
             </div>
           </div>
@@ -731,7 +732,7 @@ ${data && data.result && typeof data.result === 'string' ? data.result.substring
           <div className="container">
             <h2>연락처</h2>
             <div className="contact-info">
-              <p>Email: contact@local-culture.com</p>
+              <p>Email: socialceos@gmail.com</p>
             </div>
           </div>
         </section>
