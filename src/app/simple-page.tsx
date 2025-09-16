@@ -535,7 +535,7 @@ ${data.result ? data.result.substring(0, 200) + '...' : '응답 없음'}`
                 <h3>정책제안 AI 요약</h3>
                 <div id="summaryContent">
             {isSummaryLoading ? (
-              <div className="loading-spinner-small">AI가 정책제안을 분석 중입니다...</div>
+              <div className="loading-spinner-small">AI가 정책제안을 분석 중입니다. 잠시만 기다려주세요.</div>
             ) : aiSummaryContent ? (
               <div className="ai-summary-content">
                 {aiSummaryContent.summary ? (
