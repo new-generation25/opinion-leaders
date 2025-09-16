@@ -1346,4 +1346,199 @@ html {
   .floating-ai-text {
     font-size: 0.7rem;
   }
+}
+
+/* 관리자 로그인 버튼 */
+.admin-login-btn {
+  background: #95a5a6;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.3s ease;
+}
+
+.admin-login-btn:hover {
+  background: #7f8c8d;
+}
+
+/* 관리자 로그인 모달 */
+.admin-login-modal {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+}
+
+.admin-login-modal h3 {
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+.admin-login-form input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  margin-bottom: 15px;
+}
+
+.admin-login-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.admin-login-submit {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.admin-login-submit:hover {
+  background: #2980b9;
+}
+
+.admin-login-cancel {
+  background: #95a5a6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.admin-login-cancel:hover {
+  background: #7f8c8d;
+}
+
+/* 관리자 패널 */
+.admin-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  z-index: 3000;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #3498db;
+}
+
+.admin-header h2 {
+  color: #2c3e50;
+  margin: 0;
+}
+
+.admin-logout-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.admin-logout-btn:hover {
+  background: #c0392b;
+}
+
+.admin-table-container {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.admin-table th {
+  background: #3498db;
+  color: white;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+}
+
+.admin-table td {
+  padding: 12px;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.admin-table tr:nth-child(even) {
+  background: #f8f9fa;
+}
+
+.admin-table tr:hover {
+  background: #e3f2fd;
+}
+
+.content-cell {
+  max-width: 300px;
+  word-wrap: break-word;
+}
+
+.delete-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.delete-btn:hover {
+  background: #c0392b;
+}
+
+/* 모바일 대응 */
+@media (max-width: 768px) {
+  .admin-panel {
+    padding: 10px;
+  }
+  
+  .admin-header {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+  
+  .admin-table {
+    font-size: 0.9rem;
+  }
+  
+  .admin-table th,
+  .admin-table td {
+    padding: 8px;
+  }
+  
+  .content-cell {
+    max-width: 150px;
+  }
 } 

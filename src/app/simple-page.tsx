@@ -33,6 +33,9 @@ export default function SimplePage() {
   const [postItDisplayMode, setPostItDisplayMode] = useState<'mixed' | 'grouped'>('mixed');
   const [showAIPopup, setShowAIPopup] = useState(false);
   const [popupPosition, setPopupPosition] = useState<'center' | 'left' | 'right'>('center');
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [adminPassword, setAdminPassword] = useState('');
 
   // 카테고리별 색상 매핑
   const getCategoryColor = (topic: string) => {
@@ -379,6 +382,46 @@ ${data && data.result && typeof data.result === 'string' ? data.result.substring
       setPopupPosition('center');
     } else {
       generateAISummary();
+    }
+  };
+
+  // 관리자 로그인
+  const handleAdminLogin = () => {
+    if (adminPassword === 'admin2025') {
+      setIsAdmin(true);
+      setShowAdminLogin(false);
+      setAdminPassword('');
+    } else {
+      alert('비밀번호가 올바르지 않습니다.');
+    }
+  };
+
+  // 관리자 로그아웃
+  const handleAdminLogout = () => {
+    setIsAdmin(false);
+  };
+
+  // 의견 삭제 (관리자 전용)
+  const deleteOpinion = async (id: number) => {
+    if (!isAdmin) return;
+    
+    if (confirm('정말로 이 의견을 삭제하시겠습니까?')) {
+      try {
+        const response = await fetch(`/api/opinions/${id}`, {
+          method: 'DELETE',
+        });
+        
+        if (response.ok) {
+          // 로컬 상태에서 제거
+          setOpinions(prev => prev.filter(op => op.id !== id));
+          alert('의견이 삭제되었습니다.');
+        } else {
+          alert('삭제에 실패했습니다.');
+        }
+      } catch (error) {
+        console.error('삭제 오류:', error);
+        alert('삭제 중 오류가 발생했습니다.');
+      }
     }
   };
 
@@ -734,6 +777,12 @@ ${data && data.result && typeof data.result === 'string' ? data.result.substring
             <h2>연락처</h2>
             <div className="contact-info">
               <p>Email: socialceos@gmail.com</p>
+              <button 
+                className="admin-login-btn"
+                onClick={() => setShowAdminLogin(true)}
+              >
+                관리자 로그인
+              </button>
             </div>
           </div>
         </section>
@@ -790,6 +839,81 @@ ${data && data.result && typeof data.result === 'string' ? data.result.substring
         <div className="floating-ai-button" onClick={reopenAIPopup}>
           <span className="floating-ai-icon">🤖</span>
           <span className="floating-ai-text">AI<br/>요약</span>
+        </div>
+      )}
+
+      {/* 관리자 로그인 모달 */}
+      {showAdminLogin && (
+        <div className="modal-overlay">
+          <div className="admin-login-modal">
+            <h3>관리자 로그인</h3>
+            <div className="admin-login-form">
+              <input
+                type="password"
+                placeholder="관리자 비밀번호"
+                value={adminPassword}
+                onChange={(e) => setAdminPassword(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleAdminLogin()}
+              />
+              <div className="admin-login-buttons">
+                <button onClick={handleAdminLogin} className="admin-login-submit">
+                  로그인
+                </button>
+                <button onClick={() => setShowAdminLogin(false)} className="admin-login-cancel">
+                  취소
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 관리자 패널 */}
+      {isAdmin && (
+        <div className="admin-panel">
+          <div className="admin-header">
+            <h2>🔒 관리자 패널</h2>
+            <button onClick={handleAdminLogout} className="admin-logout-btn">
+              로그아웃
+            </button>
+          </div>
+          <div className="admin-table-container">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>주제</th>
+                  <th>작성자</th>
+                  <th>내용</th>
+                  <th>작성일</th>
+                  <th>삭제</th>
+                </tr>
+              </thead>
+              <tbody>
+                {opinions.map((opinion) => (
+                  <tr key={opinion.id}>
+                    <td>{opinion.id}</td>
+                    <td>{opinion.topic}</td>
+                    <td>{opinion.author}</td>
+                    <td className="content-cell">
+                      {opinion.content.length > 50 
+                        ? `${opinion.content.substring(0, 50)}...` 
+                        : opinion.content}
+                    </td>
+                    <td>{new Date(opinion.timestamp).toLocaleDateString()}</td>
+                    <td>
+                      <button 
+                        onClick={() => deleteOpinion(opinion.id)}
+                        className="delete-btn"
+                      >
+                        🗑️ 삭제
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 

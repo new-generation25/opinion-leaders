@@ -58,3 +58,32 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: '서버 오류가 발생했습니다.' }, { status: 500 })
   }
 }
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const url = new URL(req.url)
+    const id = url.pathname.split('/').pop()
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'ID가 필요합니다.' },
+        { status: 400 }
+      )
+    }
+
+    const { error } = await supabase
+      .from('opinions')
+      .delete()
+      .eq('id', parseInt(id))
+
+    if (error) {
+      console.error('Supabase delete error:', error)
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    return NextResponse.json({ message: '삭제되었습니다.' }, { status: 200 })
+  } catch (error) {
+    console.error('Delete API error:', error)
+    return NextResponse.json({ error: '삭제 중 오류가 발생했습니다.' }, { status: 500 })
+  }
+}
