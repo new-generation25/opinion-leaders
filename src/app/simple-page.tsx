@@ -30,7 +30,6 @@ export default function SimplePage() {
   const [aiSummaryContent, setAiSummaryContent] = useState<any>(null);
   const [expandedPostIts, setExpandedPostIts] = useState<Set<number>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
-  const [currentView, setCurrentView] = useState<'integrated' | 'category' | 'summary'>('integrated');
   const [postItDisplayMode, setPostItDisplayMode] = useState<'mixed' | 'grouped'>('mixed');
 
   // 카테고리별 색상 매핑
@@ -541,56 +540,30 @@ ${data && data.result && typeof data.result === 'string' ? data.result.substring
           <div className="container">
             <h2>의견 대시보드</h2>
 
-            {/* 메인 네비게이션 탭 */}
-            <div className="dashboard-main-nav">
-              <button 
-                className={`nav-tab ${currentView === 'integrated' ? 'active' : ''}`}
-                onClick={() => setCurrentView('integrated')}
-              >
-                📊 통합 보기
+            {/* 대시보드 컨트롤 */}
+            <div className="dashboard-controls">
+              <button onClick={generateAISummary} className="summary-btn">
+                AI 종합 요약 생성
               </button>
-              <button 
-                className={`nav-tab ${currentView === 'category' ? 'active' : ''}`}
-                onClick={() => setCurrentView('category')}
+              <select
+                id="topicFilter"
+                value={topicFilter}
+                onChange={(e) => setTopicFilter(e.target.value)}
               >
-                📁 카테고리별 보기
-              </button>
-              <button 
-                className={`nav-tab nav-tab-highlight ${currentView === 'summary' ? 'active' : ''}`}
-                onClick={() => {
-                  setCurrentView('summary');
-                  if (!showAISummary) {
-                    generateAISummary();
-                  }
-                }}
-              >
-                🤖 AI 요약 생성
-              </button>
+                <option value="">모든 주제</option>
+                <option value="지역문화 활동가 역량강화">지역문화 활동가 역량강화</option>
+                <option value="네트워킹 및 아카이빙 플랫폼">네트워킹 및 아카이빙 플랫폼</option>
+                <option value="활동가 활동환경 및 제도">활동가 활동환경 및 제도</option>
+                <option value="로컬콘텐츠 개발 및 사업화">로컬콘텐츠 개발 및 사업화</option>
+                <option value="문화공간 및 인프라">문화공간 및 인프라</option>
+                <option value="지역사회 문화 파트너십">지역사회 문화 파트너십</option>
+                <option value="정책 결정 과정 및 민관 협력">정책 결정 과정 및 민관 협력</option>
+                <option value="기타">기타</option>
+              </select>
             </div>
 
-            {/* 기존 컨트롤 (통합/카테고리 보기에서만 표시) */}
-            {currentView !== 'summary' && (
-              <div className="dashboard-controls">
-                <select
-                  id="topicFilter"
-                  value={topicFilter}
-                  onChange={(e) => setTopicFilter(e.target.value)}
-                >
-                  <option value="">모든 주제</option>
-                  <option value="지역문화 활동가 역량강화">지역문화 활동가 역량강화</option>
-                  <option value="네트워킹 및 아카이빙 플랫폼">네트워킹 및 아카이빙 플랫폼</option>
-                  <option value="활동가 활동환경 및 제도">활동가 활동환경 및 제도</option>
-                  <option value="로컬콘텐츠 개발 및 사업화">로컬콘텐츠 개발 및 사업화</option>
-                  <option value="문화공간 및 인프라">문화공간 및 인프라</option>
-                  <option value="지역사회 문화 파트너십">지역사회 문화 파트너십</option>
-                  <option value="정책 결정 과정 및 민관 협력">정책 결정 과정 및 민관 협력</option>
-                  <option value="기타">기타</option>
-                </select>
-              </div>
-            )}
-
             {/* AI 요약 섹션 */}
-            {(currentView === 'summary' || showAISummary) && (
+            {showAISummary && (
               <div id="aiSummary" className="ai-summary">
                 <h3>정책제안 AI 요약</h3>
                 <div id="summaryContent">
@@ -630,48 +603,21 @@ ${data && data.result && typeof data.result === 'string' ? data.result.substring
               </div>
             )}
 
-            {/* 통합 보기에서만 주제별 그룹 표시 */}
-            {currentView === 'integrated' && (
-              <div className="topic-groups">
-                {Object.entries(groupedOpinions).map(([topic, topicOpinions]) => (
-                  <div key={topic} className="topic-group">
-                    <h3>
-                      {topic}
-                      <span className="topic-count">{topicOpinions.length}</span>
-                    </h3>
-                    <div className="topic-summary">
-                      {topicOpinions.slice(0, 3).map((opinion) => (
-                        <p key={opinion.id}>
-                          <strong>{opinion.author}:</strong> {opinion.content.substring(0, 100)}...
-                        </p>
-                      ))}
-                      {topicOpinions.length > 3 && (
-                        <p><em>외 {topicOpinions.length - 3}개 의견</em></p>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* 포스트잇 보드 (통합/카테고리 보기에서만) */}
-            {currentView !== 'summary' && (
-              <>
-                {/* 포스트잇 표시 모드 토글 */}
-                <div className="postit-controls">
-                  <button 
-                    className={`toggle-btn ${postItDisplayMode === 'mixed' ? 'active' : ''}`}
-                    onClick={() => setPostItDisplayMode('mixed')}
-                  >
-                    📝 전체 보기
-                  </button>
-                  <button 
-                    className={`toggle-btn ${postItDisplayMode === 'grouped' ? 'active' : ''}`}
-                    onClick={() => setPostItDisplayMode('grouped')}
-                  >
-                    📋 카테고리별 보기
-                  </button>
-                </div>
+            {/* 포스트잇 표시 모드 토글 */}
+            <div className="postit-controls">
+              <button 
+                className={`toggle-btn ${postItDisplayMode === 'mixed' ? 'active' : ''}`}
+                onClick={() => setPostItDisplayMode('mixed')}
+              >
+                📝 전체 보기
+              </button>
+              <button 
+                className={`toggle-btn ${postItDisplayMode === 'grouped' ? 'active' : ''}`}
+                onClick={() => setPostItDisplayMode('grouped')}
+              >
+                📋 주제별 보기
+              </button>
+            </div>
 
             {/* 주제별 그룹 */}
             <div className="topic-groups">
@@ -695,17 +641,56 @@ ${data && data.result && typeof data.result === 'string' ? data.result.substring
               ))}
             </div>
 
-                {/* 포스트잇 보드 */}
-                {postItDisplayMode === 'mixed' ? (
-                  // 전체 보기 (기존 방식)
-                  <div className="postit-board">
-                    {filteredOpinions.length === 0 ? (
-                      <div className="empty-state">
-                        아직 제출된 의견이 없습니다.<br />
-                        첫 번째 의견을 작성해보세요!
+            {/* 포스트잇 보드 */}
+            {postItDisplayMode === 'mixed' ? (
+              // 전체 보기 (기존 방식)
+              <div className="postit-board">
+                {filteredOpinions.length === 0 ? (
+                  <div className="empty-state">
+                    아직 제출된 의견이 없습니다.<br />
+                    첫 번째 의견을 작성해보세요!
+                  </div>
+                ) : (
+                  filteredOpinions.map((opinion) => {
+                    const isExpanded = expandedPostIts.has(opinion.id);
+                    const isLongContent = opinion.content.length > 120;
+
+                    return (
+                      <div key={opinion.id} className={`post-it ${getCategoryColor(opinion.topic)}`}>
+                        <div className="post-it-header">
+                          <span className="post-it-topic">{opinion.topic}</span>
+                        </div>
+                        <div
+                          className={`post-it-content ${isLongContent ? 'expandable' : ''}`}
+                          onClick={() => isLongContent && toggleExpandPostIt(opinion.id)}
+                        >
+                          <p>
+                            {isLongContent && !isExpanded
+                              ? `${opinion.content.substring(0, 120)}...`
+                              : opinion.content}
+                          </p>
+                          {isLongContent && (
+                            <span className="expand-indicator">{isExpanded ? '접기' : '더보기'}</span>
+                          )}
+                        </div>
+                        <div className="post-it-footer">
+                          <span>{opinion.author}</span>
+                        </div>
                       </div>
-                    ) : (
-                      filteredOpinions.map((opinion) => {
+                    );
+                  })
+                )}
+              </div>
+            ) : (
+              // 주제별 보기
+              <div className="postit-board-grouped">
+                {Object.entries(groupedOpinions).map(([topic, topicOpinions]) => (
+                  <div key={topic} className="category-section">
+                    <h3 className="category-title">
+                      {topic} <span className="category-count">({topicOpinions.length}개)</span>
+                    </h3>
+                    <div className="category-postits">
+                      {topicOpinions.map((opinion) => {
                         const isExpanded = expandedPostIts.has(opinion.id);
                         const isLongContent = opinion.content.length > 120;
 
@@ -732,52 +717,11 @@ ${data && data.result && typeof data.result === 'string' ? data.result.substring
                             </div>
                           </div>
                         );
-                      })
-                    )}
+                      })}
+                    </div>
                   </div>
-                ) : (
-                  // 카테고리별 보기
-                  <div className="postit-board-grouped">
-                    {Object.entries(groupedOpinions).map(([topic, topicOpinions]) => (
-                      <div key={topic} className="category-section">
-                        <h3 className="category-title">
-                          {topic} <span className="category-count">({topicOpinions.length}개)</span>
-                        </h3>
-                        <div className="category-postits">
-                          {topicOpinions.map((opinion) => {
-                            const isExpanded = expandedPostIts.has(opinion.id);
-                            const isLongContent = opinion.content.length > 120;
-
-                            return (
-                              <div key={opinion.id} className={`post-it ${getCategoryColor(opinion.topic)}`}>
-                                <div className="post-it-header">
-                                  <span className="post-it-topic">{opinion.topic}</span>
-                                </div>
-                                <div
-                                  className={`post-it-content ${isLongContent ? 'expandable' : ''}`}
-                                  onClick={() => isLongContent && toggleExpandPostIt(opinion.id)}
-                                >
-                                  <p>
-                                    {isLongContent && !isExpanded
-                                      ? `${opinion.content.substring(0, 120)}...`
-                                      : opinion.content}
-                                  </p>
-                                  {isLongContent && (
-                                    <span className="expand-indicator">{isExpanded ? '접기' : '더보기'}</span>
-                                  )}
-                                </div>
-                                <div className="post-it-footer">
-                                  <span>{opinion.author}</span>
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </>
+                ))}
+              </div>
             )}
           </div>
         </section>
