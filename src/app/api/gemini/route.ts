@@ -50,7 +50,50 @@ export async function POST(req: NextRequest) {
             if (!Array.isArray(content) || content.length === 0) {
                 return NextResponse.json({ error: '핵심 주제 추출을 위해서는 의견 배열이 필요합니다.' }, { status: 400 });
             }
-            prompt = `다음은 여러 사용자들이 제출한 의견 목록입니다. 이 의견들을 분석하여 1~2개의 핵심 주제를 추출하고, 각 주제에 대한 간결한 설명을 덧붙여주세요. 결과는 JSON 형식으로 반환해주세요. (예: {"themes": [{"theme": "주제1", "description": "설명1"}, {"theme": "주제2", "description": "설명2"}]})\n\n의견 목록:\n${content.map((c: any) => `- ${c.content}`).join('\n')}`;
+            
+            // 카테고리별 의견 수 계산
+            const categoryCount: Record<string, number> = {};
+            content.forEach((opinion: any) => {
+                categoryCount[opinion.topic] = (categoryCount[opinion.topic] || 0) + 1;
+            });
+            
+            // 제안자 수 계산 (고유한 작성자 수)
+            const uniqueAuthors = new Set(content.map((opinion: any) => opinion.author)).size;
+            const totalOpinions = content.length;
+            
+            // 최근 의견 날짜
+            const latestDate = new Date().toLocaleDateString('ko-KR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            
+            prompt = `다음은 지역문화 활동가들이 제출한 정책제안 의견 목록입니다. 아래 형식에 맞춰 체계적으로 요약해주세요.
+
+#출력형식 지침:
+- 개조식으로 다양한 의견을 간결하게 정리
+- 제목 이후에 간단한 개요를 작성
+- 개요 내용: 제안자 수(${uniqueAuthors}명), 의견 수(${totalOpinions}건)
+- 제안의견 수가 많은 분류부터 순서대로 노출
+- 각 분류 소제목 이후에 구분기호(---)를 넣고 의견들을 종합하여 출력
+- 결과는 반드시 JSON 형식으로 래핑: {"summary": "전체 요약 내용"}
+
+#원하는 출력 예시:
+지역문화 활동가의 정책제안 요약
+
+## 제안개요
+- 제안자: ${uniqueAuthors}명, 제안의견: ${totalOpinions}건
+- 최근의견: ${latestDate}
+
+## 카테고리별 제안사항
+
+### [카테고리명] (X건)
+---
+- 주요 제안내용 요약
+- 핵심 아이디어 정리
+
+의견 목록:
+${content.map((c: any) => `[${c.topic}] ${c.author}: ${c.content}`).join('\n')}`;
             break;
         default:
             return NextResponse.json({ error: '유효하지 않은 task입니다.' }, { status: 400 });

@@ -258,12 +258,13 @@ export default function SimplePage() {
             // JSON이 아닐 경우 기본 구조로 변환
             console.warn('JSON 파싱 실패, 기본 응답으로 처리:', firstParseError);
             summaryData = {
-              themes: [
-                {
-                  theme: "AI 분석 결과",
-                  description: cleanResult.substring(0, 200) + "..."
-                }
-              ]
+              summary: `지역문화 활동가의 정책제안 분석
+
+## 제안개요
+- 분석 결과를 정리 중입니다.
+
+## 원본 응답
+${cleanResult.substring(0, 300)}...`
             };
           }
           
@@ -274,12 +275,14 @@ export default function SimplePage() {
           
           // 최종 폴백: 기본 응답 표시
           setAiSummaryContent({
-            themes: [
-              {
-                theme: "분석 중 오류 발생",
-                description: "AI 응답을 처리하는 중 문제가 발생했습니다. 다시 시도해주세요."
-              }
-            ]
+            summary: `지역문화 활동가의 정책제안 요약
+
+## 처리 상태
+- AI 응답을 처리하는 중 문제가 발생했습니다.
+- 다시 시도해주세요.
+
+## 원본 응답 (디버깅용)
+${data.result ? data.result.substring(0, 200) + '...' : '응답 없음'}`
           });
         }
 
@@ -288,12 +291,15 @@ export default function SimplePage() {
         
         // 에러 발생 시에도 기본 내용 표시
         setAiSummaryContent({
-          themes: [
-            {
-              theme: "연결 오류",
-              description: "AI 서비스에 연결할 수 없습니다. 잠시 후 다시 시도해주세요."
-            }
-          ]
+          summary: `지역문화 활동가의 정책제안 요약
+
+## 연결 상태
+- 현재 AI 서비스에 연결할 수 없습니다.
+- 잠시 후 다시 시도해주세요.
+
+## 문제 해결 방법
+- 네트워크 연결을 확인해주세요.
+- 페이지를 새로고침 후 다시 시도해주세요.`
         });
         
         // 에러 메시지는 콘솔에만 표시하고 사용자에게는 부드러운 경험 제공
@@ -510,22 +516,37 @@ export default function SimplePage() {
               <div id="aiSummary" className="ai-summary">
                 <h3>AI 종합 요약</h3>
                 <div id="summaryContent">
-                  {isSummaryLoading ? (
-                    <div className="loading-spinner-small">AI가 핵심 주제를 분석 중입니다...</div>
-                  ) : aiSummaryContent && aiSummaryContent.themes ? (
-                    <div>
-                      <h4>핵심 주제</h4>
-                      <ul>
-                        {aiSummaryContent.themes.map((theme: any, index: number) => (
-                          <li key={index}>
-                            <strong>{theme.theme}:</strong> {theme.description}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ) : (
-                    <p>요약 내용을 불러오는 데 실패했습니다.</p>
-                  )}
+            {isSummaryLoading ? (
+              <div className="loading-spinner-small">AI가 정책제안을 분석 중입니다...</div>
+            ) : aiSummaryContent ? (
+              <div className="ai-summary-content">
+                {aiSummaryContent.summary ? (
+                  <div className="structured-summary">
+                    <pre style={{whiteSpace: 'pre-wrap', fontFamily: 'inherit', margin: 0}}>
+                      {aiSummaryContent.summary}
+                    </pre>
+                  </div>
+                ) : aiSummaryContent.themes ? (
+                  <div>
+                    <h4>핵심 주제</h4>
+                    <ul>
+                      {aiSummaryContent.themes.map((theme: any, index: number) => (
+                        <li key={index}>
+                          <strong>{theme.theme}:</strong> {theme.description}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : (
+                  <div>
+                    <h4>분석 결과</h4>
+                    <p>{JSON.stringify(aiSummaryContent, null, 2)}</p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <p>요약 내용을 불러오는 데 실패했습니다.</p>
+            )}
                 </div>
               </div>
             )}
