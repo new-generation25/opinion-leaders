@@ -238,8 +238,18 @@ export default function SimplePage() {
 
         const data = await response.json();
         // Gemini가 반환한 JSON 문자열을 실제 JSON 객체로 파싱
-        const summaryData = JSON.parse(data.result.replace(/```json\n?/, '').replace(/```$/, ''));
-        setAiSummaryContent(summaryData);
+        try {
+          // 마크다운 코드 블록 제거
+          let cleanResult = data.result.replace(/```json\n?/, '').replace(/```$/, '').trim();
+          // 추가 정리: 앞뒤 공백, 개행문자 제거
+          cleanResult = cleanResult.replace(/^\s+|\s+$/g, '');
+          const summaryData = JSON.parse(cleanResult);
+          setAiSummaryContent(summaryData);
+        } catch (parseError) {
+          console.error('JSON 파싱 오류:', parseError);
+          console.error('원본 응답:', data.result);
+          throw new Error('AI 응답을 파싱하는 중 오류가 발생했습니다.');
+        }
 
     } catch (error) {
         console.error('AI 요약 생성 오류:', error);
