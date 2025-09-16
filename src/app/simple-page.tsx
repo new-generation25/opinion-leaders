@@ -44,26 +44,26 @@ export default function SimplePage() {
     } else {
       // 더미 데이터 생성
       const dummyOpinions: Opinion[] = [
-        { id: 1, topic: '교육', content: '온라인 수업의 품질을 높이려면 교사들의 디지털 역량 강화가 필요합니다.', author: '김교육', timestamp: '2024-01-15 09:30', isAutoClassified: false },
-        { id: 2, topic: '환경', content: '플라스틱 사용을 줄이기 위해 친환경 포장재 사용을 의무화해야 합니다.', author: '박환경', timestamp: '2024-01-15 10:15', isAutoClassified: true },
-        { id: 3, topic: '경제', content: '중소기업 지원을 위한 세제 혜택을 확대해야 경제가 살아날 것입니다.', author: '이경제', timestamp: '2024-01-15 11:20', isAutoClassified: false },
-        { id: 4, topic: '기술', content: '인공지능 기술이 발달하면서 일자리 변화에 대한 대비책이 필요합니다.', author: '최기술', timestamp: '2024-01-15 12:45', isAutoClassified: true },
-        { id: 5, topic: '정치', content: '지방자치단체의 권한을 강화해서 지역 특성에 맞는 정책을 펼쳐야 합니다.', author: '정정치', timestamp: '2024-01-15 13:10', isAutoClassified: false },
-        { id: 6, topic: '사회', content: '고령화 사회에 대비한 의료 시설 확충과 복지 제도 개선이 시급합니다.', author: '강사회', timestamp: '2024-01-15 14:25', isAutoClassified: true },
-        { id: 7, topic: '문화', content: '지역 문화 예술 지원을 늘려서 문화 다양성을 보장해야 합니다.', author: '윤문화', timestamp: '2024-01-15 15:40', isAutoClassified: false },
-        { id: 8, topic: '교육', content: '학생들의 창의성을 기르는 교육과정 개편이 필요하다고 생각합니다.', author: '조학생', timestamp: '2024-01-15 16:20', isAutoClassified: true },
-        { id: 9, topic: '환경', content: '재생에너지 확대를 통해 탄소 중립을 달성해야 합니다.', author: '임재생', timestamp: '2024-01-15 17:05', isAutoClassified: false },
-        { id: 10, topic: '경제', content: '부동산 가격 안정화를 위한 근본적인 대책이 마련되어야 합니다.', author: '한부동산', timestamp: '2024-01-15 18:30', isAutoClassified: true },
-        { id: 11, topic: '기술', content: '개인정보 보호를 위한 더 강력한 보안 기술 개발이 필요합니다.', author: '백보안', timestamp: '2024-01-16 09:15', isAutoClassified: false },
-        { id: 12, topic: '정치', content: '국회의원들의 의정활동을 더 투명하게 공개해야 합니다.', author: '노투명', timestamp: '2024-01-16 10:45', isAutoClassified: true },
-        { id: 13, topic: '사회', content: '청년들의 주거 문제 해결을 위한 공공임대주택 확대가 필요합니다.', author: '유청년', timestamp: '2024-01-16 11:55', isAutoClassified: false },
-        { id: 14, topic: '문화', content: '전통문화 보존과 현대적 활용 방안을 모색해야 합니다.', author: '송전통', timestamp: '2024-01-16 13:20', isAutoClassified: true },
-        { id: 15, topic: '교육', content: '교육 격차 해소를 위한 맞춤형 학습 지원이 확대되어야 합니다.', author: '전격차', timestamp: '2024-01-16 14:10', isAutoClassified: false },
-        { id: 16, topic: '환경', content: '도시 녹지 공간 확대로 시민들의 삶의 질을 향상시켜야 합니다.', author: '홍녹지', timestamp: '2024-01-16 15:35', isAutoClassified: true },
-        { id: 17, topic: '경제', content: '스타트업 생태계 활성화를 위한 투자 환경 개선이 필요합니다.', author: '문스타트업', timestamp: '2024-01-16 16:50', isAutoClassified: false },
-        { id: 18, topic: '기술', content: '5G 인프라 구축을 통한 스마트시티 건설을 가속화해야 합니다.', author: '장스마트', timestamp: '2024-01-16 17:25', isAutoClassified: true },
-        { id: 19, topic: '사회', content: '다문화 가정 지원 프로그램을 확대해서 사회 통합을 이루어야 합니다.', author: '표다문화', timestamp: '2024-01-16 18:40', isAutoClassified: false },
-        { id: 20, topic: '문화', content: '지역축제를 통한 관광산업 활성화 방안을 마련해야 합니다.', author: '남축제', timestamp: '2024-01-16 19:15', isAutoClassified: true }
+        { id: 1, topic: '지역문화 활동가 역량강화', content: '지역문화 활동가들의 전문성 향상을 위한 교육 프로그램 확대가 필요합니다.', author: '김활동가', timestamp: '2024-01-15 09:30', isAutoClassified: false },
+        { id: 2, topic: '네트워킹 및 아카이빙 플랫폼', content: '활동가들 간의 네트워킹과 활동 기록 보존을 위한 디지털 플랫폼 구축이 시급합니다.', author: '박네트워킹', timestamp: '2024-01-15 10:15', isAutoClassified: true },
+        { id: 3, topic: '활동가 활동환경 및 제도', content: '지역문화 활동가들의 안정적인 활동을 위한 제도적 지원체계 마련이 필요합니다.', author: '이제도', timestamp: '2024-01-15 11:20', isAutoClassified: false },
+        { id: 4, topic: '로컬콘텐츠 개발 및 사업화', content: '지역 특색을 살린 콘텐츠 개발과 수익모델 창출 지원이 필요합니다.', author: '최콘텐츠', timestamp: '2024-01-15 12:45', isAutoClassified: true },
+        { id: 5, topic: '문화공간 및 인프라', content: '지역문화 활동을 위한 공간 확보와 인프라 구축이 시급합니다.', author: '정공간', timestamp: '2024-01-15 13:10', isAutoClassified: false },
+        { id: 6, topic: '지역사회 문화 파트너십', content: '지역사회와 문화 활동가들 간의 협력체계 강화가 필요합니다.', author: '강파트너십', timestamp: '2024-01-15 14:25', isAutoClassified: true },
+        { id: 7, topic: '정책 결정 과정 및 민관 협력', content: '문화정책 결정 과정에 활동가들의 참여 확대가 필요합니다.', author: '윤정책', timestamp: '2024-01-15 15:40', isAutoClassified: false },
+        { id: 8, topic: '지역문화 활동가 역량강화', content: '활동가들의 리더십과 기획 능력 향상을 위한 멘토링 제도가 필요합니다.', author: '조역량', timestamp: '2024-01-15 16:20', isAutoClassified: true },
+        { id: 9, topic: '네트워킹 및 아카이빙 플랫폼', content: '지역별 문화 활동 성과를 체계적으로 기록하고 공유할 플랫폼이 필요합니다.', author: '임아카이빙', timestamp: '2024-01-15 17:05', isAutoClassified: false },
+        { id: 10, topic: '활동가 활동환경 및 제도', content: '활동가들의 처우 개선과 지속가능한 활동을 위한 제도적 보장이 필요합니다.', author: '한환경', timestamp: '2024-01-15 18:30', isAutoClassified: true },
+        { id: 11, topic: '로컬콘텐츠 개발 및 사업화', content: '지역 고유의 문화자원을 활용한 창의적 콘텐츠 개발 지원이 필요합니다.', author: '백개발', timestamp: '2024-01-16 09:15', isAutoClassified: false },
+        { id: 12, topic: '문화공간 및 인프라', content: '폐교나 유휴시설을 활용한 문화공간 조성 사업 확대가 필요합니다.', author: '노인프라', timestamp: '2024-01-16 10:45', isAutoClassified: true },
+        { id: 13, topic: '지역사회 문화 파트너십', content: '지역 기업과 문화 활동가들 간의 상생 협력 모델 개발이 필요합니다.', author: '유협력', timestamp: '2024-01-16 11:55', isAutoClassified: false },
+        { id: 14, topic: '정책 결정 과정 및 민관 협력', content: '문화정책 수립 시 현장 활동가들의 의견 수렴 체계 구축이 필요합니다.', author: '송민관', timestamp: '2024-01-16 13:20', isAutoClassified: true },
+        { id: 15, topic: '지역문화 활동가 역량강화', content: '디지털 기술 활용 능력 향상을 위한 교육 프로그램이 필요합니다.', author: '전디지털', timestamp: '2024-01-16 14:10', isAutoClassified: false },
+        { id: 16, topic: '네트워킹 및 아카이빙 플랫폼', content: '전국 문화 활동가들의 경험과 노하우를 공유할 온라인 플랫폼이 필요합니다.', author: '홍공유', timestamp: '2024-01-16 15:35', isAutoClassified: true },
+        { id: 17, topic: '활동가 활동환경 및 제도', content: '문화 활동가들의 사회보장 제도 확대가 시급합니다.', author: '문보장', timestamp: '2024-01-16 16:50', isAutoClassified: false },
+        { id: 18, topic: '로컬콘텐츠 개발 및 사업화', content: '지역문화 콘텐츠의 상업화를 위한 마케팅 지원이 필요합니다.', author: '장마케팅', timestamp: '2024-01-16 17:25', isAutoClassified: true },
+        { id: 19, topic: '문화공간 및 인프라', content: '문화 활동을 위한 장비 대여 시스템 구축이 필요합니다.', author: '표장비', timestamp: '2024-01-16 18:40', isAutoClassified: false },
+        { id: 20, topic: '지역사회 문화 파트너십', content: '지역축제와 문화행사의 지속가능한 운영 모델 개발이 필요합니다.', author: '남지속가능', timestamp: '2024-01-16 19:15', isAutoClassified: true }
       ];
       
       setOpinions(dummyOpinions);
@@ -96,7 +96,7 @@ export default function SimplePage() {
             finalTopic = data.result.trim();
         } catch (error) {
             console.error('주제 분류 중 오류 발생:', error);
-            alert('AI 주제 분류 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+            alert('AI 주제 분류 중 오류가 발생했습니다. Gemini API 키가 설정되었는지 확인해주세요. 수동 분류를 사용하거나 잠시 후 다시 시도해주세요.');
             setIsSubmitting(false);
             return;
         } finally {
@@ -178,8 +178,9 @@ export default function SimplePage() {
         setAiSummaryContent(summaryData);
 
     } catch (error) {
-        console.error(error);
-        alert('AI 요약 생성 중 오류가 발생했습니다.');
+        console.error('AI 요약 생성 오류:', error);
+        const errorMessage = error instanceof Error ? error.message : 'AI 요약 생성 중 오류가 발생했습니다.';
+        alert(`AI 요약 생성 실패: ${errorMessage}\n\nGemini API 키가 설정되었는지 확인해주세요.`);
         setShowAISummary(false);
     } finally {
         setIsSummaryLoading(false);
@@ -216,7 +217,7 @@ export default function SimplePage() {
         <nav className="navbar">
           <div className="nav-container">
             <div className="logo">
-              <h1>Opinion Leader</h1>
+              <h1>지역문화 활동가 정책제안</h1>
             </div>
             <ul className="nav-menu">
               <li><a href="#home">홈</a></li>
@@ -240,7 +241,7 @@ export default function SimplePage() {
         <section id="home" className="hero">
           <div className="hero-content">
             <h2>당신의 목소리가 세상을 바꿉니다</h2>
-            <p>Opinion Leader와 함께 영향력 있는 의견을 나누고, 변화를 이끌어나가세요.</p>
+            <p>지역문화 활동가들의 정책 제안을 통해 지역문화 발전을 이끌어나가세요.</p>
             <button 
               className="cta-button"
               onClick={() => {
@@ -298,13 +299,13 @@ export default function SimplePage() {
                         required
                       >
                         <option value="">주제를 선택하세요</option>
-                        <option value="교육">교육</option>
-                        <option value="환경">환경</option>
-                        <option value="경제">경제</option>
-                        <option value="기술">기술</option>
-                        <option value="정치">정치</option>
-                        <option value="사회">사회</option>
-                        <option value="문화">문화</option>
+                        <option value="지역문화 활동가 역량강화">지역문화 활동가 역량강화</option>
+                        <option value="네트워킹 및 아카이빙 플랫폼">네트워킹 및 아카이빙 플랫폼</option>
+                        <option value="활동가 활동환경 및 제도">활동가 활동환경 및 제도</option>
+                        <option value="로컬콘텐츠 개발 및 사업화">로컬콘텐츠 개발 및 사업화</option>
+                        <option value="문화공간 및 인프라">문화공간 및 인프라</option>
+                        <option value="지역사회 문화 파트너십">지역사회 문화 파트너십</option>
+                        <option value="정책 결정 과정 및 민관 협력">정책 결정 과정 및 민관 협력</option>
                         <option value="기타">기타</option>
                       </select>
                     </div>
@@ -377,13 +378,13 @@ export default function SimplePage() {
                 onChange={(e) => setTopicFilter(e.target.value)}
               >
                 <option value="">모든 주제</option>
-                <option value="교육">교육</option>
-                <option value="환경">환경</option>
-                <option value="경제">경제</option>
-                <option value="기술">기술</option>
-                <option value="정치">정치</option>
-                <option value="사회">사회</option>
-                <option value="문화">문화</option>
+                <option value="지역문화 활동가 역량강화">지역문화 활동가 역량강화</option>
+                <option value="네트워킹 및 아카이빙 플랫폼">네트워킹 및 아카이빙 플랫폼</option>
+                <option value="활동가 활동환경 및 제도">활동가 활동환경 및 제도</option>
+                <option value="로컬콘텐츠 개발 및 사업화">로컬콘텐츠 개발 및 사업화</option>
+                <option value="문화공간 및 인프라">문화공간 및 인프라</option>
+                <option value="지역사회 문화 파트너십">지역사회 문화 파트너십</option>
+                <option value="정책 결정 과정 및 민관 협력">정책 결정 과정 및 민관 협력</option>
                 <option value="기타">기타</option>
               </select>
             </div>
@@ -502,7 +503,7 @@ export default function SimplePage() {
           <div className="container">
             <h2>연락처</h2>
             <div className="contact-info">
-              <p>Email: contact@opinion-leader.com</p>
+              <p>Email: contact@local-culture.com</p>
             </div>
           </div>
         </section>
@@ -510,7 +511,7 @@ export default function SimplePage() {
 
       <footer>
         <div className="container">
-          <p>&copy; 2025 Opinion Leader. All rights reserved.</p>
+          <p>&copy; 2025 지역문화 활동가 정책제안. All rights reserved.</p>
         </div>
       </footer>
 

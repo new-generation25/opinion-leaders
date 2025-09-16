@@ -2,9 +2,17 @@ import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Gemini API 키를 환경 변수에서 가져옵니다.
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+const apiKey = process.env.GEMINI_API_KEY;
+if (!apiKey) {
+  console.warn('GEMINI_API_KEY가 설정되지 않았습니다.');
+}
+const genAI = apiKey ? new GoogleGenerativeAI(apiKey) : null;
 
 async function run(prompt: string) {
+  if (!genAI) {
+    throw new Error('Gemini API 키가 설정되지 않았습니다.');
+  }
+  
   // For text-only input, use the gemini-pro model
   const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash-latest' });
 
@@ -25,11 +33,18 @@ export async function POST(req: NextRequest) {
       );
     }
     
+    if (!genAI) {
+      return NextResponse.json(
+        { error: 'Gemini API 키가 설정되지 않았습니다. .env.local 파일에 GEMINI_API_KEY를 설정해주세요.' },
+        { status: 500 }
+      );
+    }
+    
     let prompt;
     // 여기에 나중에 task별로 다른 프롬프트를 구성하는 로직이 들어갑니다.
     switch (task) {
         case 'classify':
-            prompt = `다음 의견을 다음 카테고리 중 하나로 분류해주세요: '교육', '환경', '경제', '기술', '정치', '사회', '문화', '기타'. 다른 설명 없이 카테고리만 반환해주세요.\n\n의견: "${content}"`;
+            prompt = `다음 의견을 다음 카테고리 중 하나로 분류해주세요: '지역문화 활동가 역량강화', '네트워킹 및 아카이빙 플랫폼', '활동가 활동환경 및 제도', '로컬콘텐츠 개발 및 사업화', '문화공간 및 인프라', '지역사회 문화 파트너십', '정책 결정 과정 및 민관 협력', '기타'. 다른 설명 없이 카테고리만 반환해주세요.\n\n의견: "${content}"`;
             break;
         case 'extractThemes':
             if (!Array.isArray(content) || content.length === 0) {
