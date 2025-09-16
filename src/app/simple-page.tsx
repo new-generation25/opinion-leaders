@@ -34,18 +34,20 @@ export default function SimplePage() {
   // 마크다운을 HTML로 변환하는 함수
   const parseMarkdownToHTML = (markdown: string) => {
     return markdown
-      // 큰 제목 삭제 (지역문화 활동가의 정책제안 요약 등)
-      .replace(/^# .+$/gm, '')
-      // 제목 처리 (## ###만 처리)
-      .replace(/^### (.+)$/gm, '<h4 class="summary-h4">$1</h4>')
+      // 모든 제목 삭제 (# ## ### 모두)
+      .replace(/^#{1,6} .+$/gm, '')
+      // 중간 제목만 처리 (##)
       .replace(/^## (.+)$/gm, '<h3 class="summary-h3">$1</h3>')
-      // 구분선 처리
-      .replace(/^---$/gm, '<hr class="summary-divider" />')
-      // 리스트 항목 처리 (•를 제거하고 CSS로 처리)
+      // 소제목 처리 (###)
+      .replace(/^### (.+)$/gm, '<h4 class="summary-h4">$1</h4>')
+      // 구분선은 카테고리 사이에만 (여러 개의 ---를 하나로 통합)
+      .replace(/^---+$/gm, '<hr class="summary-divider" />')
+      // 리스트 항목 처리
       .replace(/^- (.+)$/gm, '<div class="summary-item">$1</div>')
-      // 연속된 줄바꿈 정리
-      .replace(/\n{3,}/g, '\n\n')
-      .replace(/\n\n/g, '<div class="summary-break"></div>')
+      // 불필요한 "의견 목록:" 섹션 제거
+      .replace(/의견 목록:[\s\S]*$/gm, '')
+      // 연속된 줄바꿈 최소화
+      .replace(/\n{3,}/g, '\n')
       .replace(/\n/g, '<br>');
   };
 
