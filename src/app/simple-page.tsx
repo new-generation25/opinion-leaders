@@ -33,22 +33,31 @@ export default function SimplePage() {
 
   // 마크다운을 HTML로 변환하는 함수
   const parseMarkdownToHTML = (markdown: string) => {
-    return markdown
-      // 모든 제목 삭제 (# ## ### 모두)
-      .replace(/^#{1,6} .+$/gm, '')
-      // 중간 제목만 처리 (##)
-      .replace(/^## (.+)$/gm, '<h3 class="summary-h3">$1</h3>')
-      // 소제목 처리 (###)
-      .replace(/^### (.+)$/gm, '<h4 class="summary-h4">$1</h4>')
-      // 구분선은 카테고리 사이에만 (여러 개의 ---를 하나로 통합)
-      .replace(/^---+$/gm, '<hr class="summary-divider" />')
-      // 리스트 항목 처리
-      .replace(/^- (.+)$/gm, '<div class="summary-item">$1</div>')
-      // 불필요한 "의견 목록:" 섹션 제거
-      .replace(/의견 목록:[\s\S]*$/gm, '')
-      // 연속된 줄바꿈 최소화
-      .replace(/\n{3,}/g, '\n')
-      .replace(/\n/g, '<br>');
+    if (!markdown || typeof markdown !== 'string') {
+      return '';
+    }
+    
+    try {
+      return markdown
+        // 모든 제목 삭제 (# ## ### 모두) - 더 안전한 정규식
+        .replace(/^#{1,6}\s+.+$/gm, '')
+        // 중간 제목만 처리 (##)
+        .replace(/^##\s+(.+)$/gm, '<h3 class="summary-h3">$1</h3>')
+        // 소제목 처리 (###)
+        .replace(/^###\s+(.+)$/gm, '<h4 class="summary-h4">$1</h4>')
+        // 구분선은 카테고리 사이에만
+        .replace(/^-{3,}$/gm, '<hr class="summary-divider" />')
+        // 리스트 항목 처리
+        .replace(/^-\s+(.+)$/gm, '<div class="summary-item">$1</div>')
+        // 불필요한 "의견 목록:" 섹션 제거 - 더 안전한 방식
+        .replace(/의견\s*목록\s*:[\s\S]*$/i, '')
+        // 연속된 줄바꿈 최소화
+        .replace(/\n{3,}/g, '\n\n')
+        .replace(/\n/g, '<br>');
+    } catch (error) {
+      console.error('마크다운 파싱 오류:', error);
+      return markdown; // 원본 반환
+    }
   };
 
   // 컴포넌트 마운트 확인
@@ -261,6 +270,10 @@ export default function SimplePage() {
         try {
           console.log('원본 Gemini 응답:', data.result);
           
+          if (!data.result || typeof data.result !== 'string') {
+            throw new Error('유효하지 않은 AI 응답 형식');
+          }
+          
           // 다양한 마크다운 형식 제거
           let cleanResult = data.result
             .replace(/```json\s*/g, '')  // ```json 시작
@@ -274,13 +287,16 @@ export default function SimplePage() {
           let summaryData;
           try {
             summaryData = JSON.parse(cleanResult);
+            
+            // summary 필드 검증
+            if (!summaryData.summary || typeof summaryData.summary !== 'string') {
+              throw new Error('summary 필드가 없거나 올바르지 않습니다');
+            }
           } catch (firstParseError) {
             // JSON이 아닐 경우 기본 구조로 변환
             console.warn('JSON 파싱 실패, 기본 응답으로 처리:', firstParseError);
             summaryData = {
-              summary: `지역문화 활동가의 정책제안 분석
-
-## 제안개요
+              summary: `## 제안개요
 - 분석 결과를 정리 중입니다.
 
 ## 원본 응답
@@ -295,14 +311,12 @@ ${cleanResult.substring(0, 300)}...`
           
           // 최종 폴백: 기본 응답 표시
           setAiSummaryContent({
-            summary: `지역문화 활동가의 정책제안 요약
-
-## 처리 상태
+            summary: `## 처리 상태
 - AI 응답을 처리하는 중 문제가 발생했습니다.
 - 다시 시도해주세요.
 
 ## 원본 응답 (디버깅용)
-${data.result ? data.result.substring(0, 200) + '...' : '응답 없음'}`
+${data && data.result && typeof data.result === 'string' ? data.result.substring(0, 200) + '...' : '응답 없음'}`
           });
         }
 
@@ -311,9 +325,7 @@ ${data.result ? data.result.substring(0, 200) + '...' : '응답 없음'}`
         
         // 에러 발생 시에도 기본 내용 표시
         setAiSummaryContent({
-          summary: `지역문화 활동가의 정책제안 요약
-
-## 연결 상태
+          summary: `## 연결 상태
 - 현재 AI 서비스에 연결할 수 없습니다.
 - 잠시 후 다시 시도해주세요.
 
