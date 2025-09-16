@@ -38,24 +38,70 @@ export default function SimplePage() {
   useEffect(() => {
     if (!mounted) return;
     
-    const savedOpinions = localStorage.getItem('opinions');
-    if (savedOpinions) {
-      setOpinions(JSON.parse(savedOpinions));
-    } else {
-      // 더미 데이터 생성
-      const dummyOpinions: Opinion[] = [
-        { id: 1, topic: '지역문화 활동가 역량강화', content: '지역문화 활동가들의 전문성 향상을 위한 교육 프로그램 확대가 필요합니다.', author: '김활동가', timestamp: '2024-01-15 09:30', isAutoClassified: false },
-        { id: 2, topic: '네트워킹 및 아카이빙 플랫폼', content: '활동가들 간의 네트워킹과 활동 기록 보존을 위한 디지털 플랫폼 구축이 시급합니다.', author: '박네트워킹', timestamp: '2024-01-15 10:15', isAutoClassified: true },
-        { id: 3, topic: '활동가 활동환경 및 제도', content: '지역문화 활동가들의 안정적인 활동을 위한 제도적 지원체계 마련이 필요합니다.', author: '이제도', timestamp: '2024-01-15 11:20', isAutoClassified: false },
-        { id: 4, topic: '로컬콘텐츠 개발 및 사업화', content: '지역 특색을 살린 콘텐츠 개발과 수익모델 창출 지원이 필요합니다.', author: '최콘텐츠', timestamp: '2024-01-15 12:45', isAutoClassified: true },
-        { id: 5, topic: '문화공간 및 인프라', content: '지역문화 활동을 위한 공간 확보와 인프라 구축이 시급합니다.', author: '정공간', timestamp: '2024-01-15 13:10', isAutoClassified: false },
-        { id: 6, topic: '지역사회 문화 파트너십', content: '지역사회와 문화 활동가들 간의 협력체계 강화가 필요합니다.', author: '강파트너십', timestamp: '2024-01-15 14:25', isAutoClassified: true },
-        { id: 7, topic: '정책 결정 과정 및 민관 협력', content: '문화정책 결정 과정에 활동가들의 참여 확대가 필요합니다.', author: '윤정책', timestamp: '2024-01-15 15:40', isAutoClassified: false }
-      ];
-      
-      setOpinions(dummyOpinions);
-      localStorage.setItem('opinions', JSON.stringify(dummyOpinions));
-    }
+    // 기존 데이터 완전 삭제 후 새로운 정책제안 샘플 생성
+    localStorage.removeItem('opinions');
+    
+    const newPolicyProposals: Opinion[] = [
+      { 
+        id: 1, 
+        topic: '지역문화 활동가 역량강화', 
+        content: '지역문화 활동가들의 지속가능한 성장을 위해 연간 40시간 이상의 체계적인 교육 프로그램을 제공하고, 문화예술교육사 자격증 취득 지원 및 멘토링 제도를 도입해야 합니다. 특히 디지털 미디어 활용법, 기획·운영 실무, 지역사회 네트워킹 방법론 등 실질적인 역량 강화 교육이 필요합니다.', 
+        author: '김문화기획', 
+        timestamp: '2024-01-15 09:30', 
+        isAutoClassified: false 
+      },
+      { 
+        id: 2, 
+        topic: '네트워킹 및 아카이빙 플랫폼', 
+        content: '전국 지역문화 활동가들이 상호 소통하고 우수사례를 공유할 수 있는 통합 온라인 플랫폼을 구축하여, 지역별 문화 프로젝트 아카이빙, 활동가 데이터베이스 구축, 협업 프로젝트 매칭 시스템을 운영해야 합니다. 이를 통해 지역 간 문화격차 해소와 활동가들의 협력 네트워크를 강화할 수 있습니다.', 
+        author: '박네트워크', 
+        timestamp: '2024-01-15 10:15', 
+        isAutoClassified: true 
+      },
+      { 
+        id: 3, 
+        topic: '활동가 활동환경 및 제도', 
+        content: '지역문화 활동가들의 안정적인 활동 보장을 위해 최저임금 수준의 기본 활동비 지원, 4대보험 가입 지원, 문화활동 공간 임대료 지원 등 제도적 안전망을 마련하고, 지역문화 활동가 인증제도를 도입하여 전문성을 인정받을 수 있는 체계를 구축해야 합니다.', 
+        author: '이제도개선', 
+        timestamp: '2024-01-15 11:20', 
+        isAutoClassified: false 
+      },
+      { 
+        id: 4, 
+        topic: '로컬콘텐츠 개발 및 사업화', 
+        content: '지역 고유의 문화자원을 활용한 관광콘텐츠, 문화상품, 체험프로그램 개발을 지원하고, 로컬크리에이터 창업 인큐베이팅, 온라인 마케팅 교육, 유통채널 연계 등을 통해 지역문화의 경제적 가치 창출과 지속가능한 수익모델 구축을 지원해야 합니다.', 
+        author: '최사업화', 
+        timestamp: '2024-01-15 12:45', 
+        isAutoClassified: true 
+      },
+      { 
+        id: 5, 
+        topic: '문화공간 및 인프라', 
+        content: '폐교, 유휴 공공시설, 빈 상가 등을 활용한 지역문화거점 조성사업을 확대하고, 문화활동에 필요한 음향·영상장비, 공연무대, 전시공간 등 인프라를 구축하여 활동가들이 안정적으로 창작활동을 할 수 있는 물리적 기반을 마련해야 합니다.', 
+        author: '정공간조성', 
+        timestamp: '2024-01-15 13:10', 
+        isAutoClassified: false 
+      },
+      { 
+        id: 6, 
+        topic: '지역사회 문화 파트너십', 
+        content: '지역 기업, 학교, 시민단체, 행정기관과 문화 활동가 간의 상시적 협력체계를 구축하여 기업의 사회공헌활동과 연계한 문화프로젝트, 학교 연계 문화교육 프로그램, 시민참여형 문화축제 등을 통해 지역사회 전체가 문화 생태계의 주체가 될 수 있는 환경을 조성해야 합니다.', 
+        author: '강파트너십', 
+        timestamp: '2024-01-15 14:25', 
+        isAutoClassified: true 
+      },
+      { 
+        id: 7, 
+        topic: '정책 결정 과정 및 민관 협력', 
+        content: '지역문화정책 수립 시 현장 활동가들의 의견이 실질적으로 반영될 수 있도록 정기적인 정책간담회, 문화정책위원회 내 활동가 참여 확대, 정책 모니터링단 운영 등을 통해 정책의 현장성을 높이고, 민관 협력을 통한 문화정책 거버넌스를 구축해야 합니다.', 
+        author: '윤정책참여', 
+        timestamp: '2024-01-15 15:40', 
+        isAutoClassified: false 
+      }
+    ];
+    
+    setOpinions(newPolicyProposals);
+    localStorage.setItem('opinions', JSON.stringify(newPolicyProposals));
   }, [mounted]);
 
   const handleSubmit = async (e: React.FormEvent) => {
