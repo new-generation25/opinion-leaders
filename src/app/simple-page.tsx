@@ -9,7 +9,8 @@ interface Opinion {
   content: string;
   author: string;
   timestamp: string;
-  isAutoClassified?: boolean;
+  is_auto_classified?: boolean;
+  created_at?: string;
 }
 
 export default function SimplePage() {
@@ -28,81 +29,98 @@ export default function SimplePage() {
   const [isSummaryLoading, setIsSummaryLoading] = useState(false);
   const [aiSummaryContent, setAiSummaryContent] = useState<any>(null);
   const [expandedPostIts, setExpandedPostIts] = useState<Set<number>>(new Set());
+  const [isLoading, setIsLoading] = useState(true);
 
   // 컴포넌트 마운트 확인
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // localStorage에서 데이터 로드
+  // Supabase에서 데이터 로드
   useEffect(() => {
     if (!mounted) return;
     
-    // 기존 데이터 완전 삭제 후 새로운 정책제안 샘플 생성
-    localStorage.removeItem('opinions');
-    
-    const newPolicyProposals: Opinion[] = [
-      { 
-        id: 1, 
-        topic: '지역문화 활동가 역량강화', 
-        content: '지역문화 활동가들의 지속가능한 성장을 위해 연간 40시간 이상의 체계적인 교육 프로그램을 제공하고, 문화예술교육사 자격증 취득 지원 및 멘토링 제도를 도입해야 합니다. 특히 디지털 미디어 활용법, 기획·운영 실무, 지역사회 네트워킹 방법론 등 실질적인 역량 강화 교육이 필요합니다.', 
-        author: '김문화기획', 
-        timestamp: '2024-01-15 09:30', 
-        isAutoClassified: false 
-      },
-      { 
-        id: 2, 
-        topic: '네트워킹 및 아카이빙 플랫폼', 
-        content: '전국 지역문화 활동가들이 상호 소통하고 우수사례를 공유할 수 있는 통합 온라인 플랫폼을 구축하여, 지역별 문화 프로젝트 아카이빙, 활동가 데이터베이스 구축, 협업 프로젝트 매칭 시스템을 운영해야 합니다. 이를 통해 지역 간 문화격차 해소와 활동가들의 협력 네트워크를 강화할 수 있습니다.', 
-        author: '박네트워크', 
-        timestamp: '2024-01-15 10:15', 
-        isAutoClassified: true 
-      },
-      { 
-        id: 3, 
-        topic: '활동가 활동환경 및 제도', 
-        content: '지역문화 활동가들의 안정적인 활동 보장을 위해 최저임금 수준의 기본 활동비 지원, 4대보험 가입 지원, 문화활동 공간 임대료 지원 등 제도적 안전망을 마련하고, 지역문화 활동가 인증제도를 도입하여 전문성을 인정받을 수 있는 체계를 구축해야 합니다.', 
-        author: '이제도개선', 
-        timestamp: '2024-01-15 11:20', 
-        isAutoClassified: false 
-      },
-      { 
-        id: 4, 
-        topic: '로컬콘텐츠 개발 및 사업화', 
-        content: '지역 고유의 문화자원을 활용한 관광콘텐츠, 문화상품, 체험프로그램 개발을 지원하고, 로컬크리에이터 창업 인큐베이팅, 온라인 마케팅 교육, 유통채널 연계 등을 통해 지역문화의 경제적 가치 창출과 지속가능한 수익모델 구축을 지원해야 합니다.', 
-        author: '최사업화', 
-        timestamp: '2024-01-15 12:45', 
-        isAutoClassified: true 
-      },
-      { 
-        id: 5, 
-        topic: '문화공간 및 인프라', 
-        content: '폐교, 유휴 공공시설, 빈 상가 등을 활용한 지역문화거점 조성사업을 확대하고, 문화활동에 필요한 음향·영상장비, 공연무대, 전시공간 등 인프라를 구축하여 활동가들이 안정적으로 창작활동을 할 수 있는 물리적 기반을 마련해야 합니다.', 
-        author: '정공간조성', 
-        timestamp: '2024-01-15 13:10', 
-        isAutoClassified: false 
-      },
-      { 
-        id: 6, 
-        topic: '지역사회 문화 파트너십', 
-        content: '지역 기업, 학교, 시민단체, 행정기관과 문화 활동가 간의 상시적 협력체계를 구축하여 기업의 사회공헌활동과 연계한 문화프로젝트, 학교 연계 문화교육 프로그램, 시민참여형 문화축제 등을 통해 지역사회 전체가 문화 생태계의 주체가 될 수 있는 환경을 조성해야 합니다.', 
-        author: '강파트너십', 
-        timestamp: '2024-01-15 14:25', 
-        isAutoClassified: true 
-      },
-      { 
-        id: 7, 
-        topic: '정책 결정 과정 및 민관 협력', 
-        content: '지역문화정책 수립 시 현장 활동가들의 의견이 실질적으로 반영될 수 있도록 정기적인 정책간담회, 문화정책위원회 내 활동가 참여 확대, 정책 모니터링단 운영 등을 통해 정책의 현장성을 높이고, 민관 협력을 통한 문화정책 거버넌스를 구축해야 합니다.', 
-        author: '윤정책참여', 
-        timestamp: '2024-01-15 15:40', 
-        isAutoClassified: false 
-      }
-    ];
-    
-    setOpinions(newPolicyProposals);
-    localStorage.setItem('opinions', JSON.stringify(newPolicyProposals));
+    loadOpinions();
   }, [mounted]);
+
+  const loadOpinions = async () => {
+    try {
+      setIsLoading(true);
+      const response = await fetch('/api/opinions');
+      
+      if (response.ok) {
+        const data = await response.json();
+        setOpinions(data);
+      } else {
+        // API 실패시 기본 샘플 데이터 사용
+        const sampleData = [
+          { 
+            id: 1, 
+            topic: '지역문화 활동가 역량강화', 
+            content: '지역문화 활동가들의 지속가능한 성장을 위해 연간 40시간 이상의 체계적인 교육 프로그램을 제공하고, 문화예술교육사 자격증 취득 지원 및 멘토링 제도를 도입해야 합니다.', 
+            author: '김문화기획', 
+            timestamp: '2024-01-15 09:30', 
+            is_auto_classified: false 
+          },
+          { 
+            id: 2, 
+            topic: '네트워킹 및 아카이빙 플랫폼', 
+            content: '전국 지역문화 활동가들이 상호 소통하고 우수사례를 공유할 수 있는 통합 온라인 플랫폼을 구축하여, 지역별 문화 프로젝트 아카이빙, 활동가 데이터베이스 구축, 협업 프로젝트 매칭 시스템을 운영해야 합니다.', 
+            author: '박네트워크', 
+            timestamp: '2024-01-15 10:15', 
+            is_auto_classified: true 
+          },
+          { 
+            id: 3, 
+            topic: '활동가 활동환경 및 제도', 
+            content: '지역문화 활동가들의 안정적인 활동 보장을 위해 최저임금 수준의 기본 활동비 지원, 4대보험 가입 지원, 문화활동 공간 임대료 지원 등 제도적 안전망을 마련해야 합니다.', 
+            author: '이제도개선', 
+            timestamp: '2024-01-15 11:20', 
+            is_auto_classified: false 
+          },
+          { 
+            id: 4, 
+            topic: '로컬콘텐츠 개발 및 사업화', 
+            content: '지역 고유의 문화자원을 활용한 관광콘텐츠, 문화상품, 체험프로그램 개발을 지원하고, 로컬크리에이터 창업 인큐베이팅을 통해 지역문화의 경제적 가치 창출과 지속가능한 수익모델 구축을 지원해야 합니다.', 
+            author: '최사업화', 
+            timestamp: '2024-01-15 12:45', 
+            is_auto_classified: true 
+          },
+          { 
+            id: 5, 
+            topic: '문화공간 및 인프라', 
+            content: '폐교, 유휴 공공시설, 빈 상가 등을 활용한 지역문화거점 조성사업을 확대하고, 문화활동에 필요한 음향·영상장비, 공연무대, 전시공간 등 인프라를 구축해야 합니다.', 
+            author: '정공간조성', 
+            timestamp: '2024-01-15 13:10', 
+            is_auto_classified: false 
+          },
+          { 
+            id: 6, 
+            topic: '지역사회 문화 파트너십', 
+            content: '지역 기업, 학교, 시민단체, 행정기관과 문화 활동가 간의 상시적 협력체계를 구축하여 기업의 사회공헌활동과 연계한 문화프로젝트, 학교 연계 문화교육 프로그램을 통해 지역사회 전체가 문화 생태계의 주체가 될 수 있는 환경을 조성해야 합니다.', 
+            author: '강파트너십', 
+            timestamp: '2024-01-15 14:25', 
+            is_auto_classified: true 
+          },
+          { 
+            id: 7, 
+            topic: '정책 결정 과정 및 민관 협력', 
+            content: '지역문화정책 수립 시 현장 활동가들의 의견이 실질적으로 반영될 수 있도록 정기적인 정책간담회, 문화정책위원회 내 활동가 참여 확대, 정책 모니터링단 운영 등을 통해 민관 협력 문화정책 거버넌스를 구축해야 합니다.', 
+            author: '윤정책참여', 
+            timestamp: '2024-01-15 15:40', 
+            is_auto_classified: false 
+          }
+        ];
+        setOpinions(sampleData);
+      }
+    } catch (error) {
+      console.error('데이터 로드 오류:', error);
+      // 에러 발생시 빈 배열로 초기화
+      setOpinions([]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -129,42 +147,55 @@ export default function SimplePage() {
             finalTopic = data.result.trim();
         } catch (error) {
             console.error('주제 분류 중 오류 발생:', error);
-            alert('AI 주제 분류 중 오류가 발생했습니다. Gemini API 키가 설정되었는지 확인해주세요. 수동 분류를 사용하거나 잠시 후 다시 시도해주세요.');
+            alert('AI 주제 분류 중 오류가 발생했습니다. 수동 분류를 사용하거나 잠시 후 다시 시도해주세요.');
             setIsSubmitting(false);
             return;
-        } finally {
-            setIsSubmitting(false);
         }
     }
     
-    const newOpinion: Opinion = {
-      id: Date.now(),
-      topic: finalTopic,
-      content: opinionContent,
-      author: author || '익명',
-      timestamp: new Date().toISOString(),
-      isAutoClassified: topicMode === 'auto'
-    };
-    
-    const updatedOpinions = [...opinions, newOpinion];
-    setOpinions(updatedOpinions);
-    localStorage.setItem('opinions', JSON.stringify(updatedOpinions));
-    
-    // 폼 리셋
-    setOpinionContent('');
-    setAuthor('');
-    setSelectedTopic('');
-    
-    // 성공 모달 표시
-    setShowSuccessModal(true);
-    
-    // 3초 후 자동으로 모달 숨기기
-    setTimeout(() => {
-      setShowSuccessModal(false);
-    }, 3000);
-    
-    // 대시보드로 스크롤
-    document.getElementById('dashboard')?.scrollIntoView({ behavior: 'smooth' });
+    try {
+      setIsSubmitting(true);
+      
+      const response = await fetch('/api/opinions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          topic: finalTopic,
+          content: opinionContent,
+          author: author || '익명',
+          is_auto_classified: topicMode === 'auto'
+        }),
+      });
+
+      if (response.ok) {
+        // 성공시 데이터 다시 로드
+        await loadOpinions();
+        
+        // 폼 리셋
+        setOpinionContent('');
+        setAuthor('');
+        setSelectedTopic('');
+        
+        // 성공 모달 표시
+        setShowSuccessModal(true);
+        
+        // 3초 후 자동으로 모달 숨기기
+        setTimeout(() => {
+          setShowSuccessModal(false);
+        }, 3000);
+        
+        // 대시보드로 스크롤
+        document.getElementById('dashboard')?.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        const errorData = await response.json();
+        alert(`의견 제출 실패: ${errorData.error}`);
+      }
+    } catch (error) {
+      console.error('의견 제출 오류:', error);
+      alert('의견 제출 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // 주제별 그룹핑
@@ -234,11 +265,11 @@ export default function SimplePage() {
     });
   };
 
-  // 컴포넌트가 마운트되지 않았으면 로딩 상태 표시
-  if (!mounted) {
+  // 컴포넌트가 마운트되지 않았거나 로딩 중이면 로딩 상태 표시
+  if (!mounted || isLoading) {
     return (
       <div className="loading-container">
-        <div className="loading-spinner">로딩 중...</div>
+        <div className="loading-spinner">데이터를 불러오는 중...</div>
       </div>
     );
   }
@@ -387,7 +418,7 @@ export default function SimplePage() {
 
                 <div className="form-group submit-group">
                   <button type="submit" className="submit-btn" disabled={isSubmitting}>
-                    {isSubmitting ? 'AI 분석 중...' : '의견 제출'}
+                    {isSubmitting ? (topicMode === 'auto' ? 'AI 분석 중...' : '제출 중...') : '의견 제출'}
                   </button>
                 </div>
               </form>
