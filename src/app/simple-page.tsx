@@ -293,14 +293,13 @@ export default function SimplePage() {
               throw new Error('summary 필드가 없거나 올바르지 않습니다');
             }
           } catch (firstParseError) {
-            // JSON이 아닐 경우 기본 구조로 변환
-            console.warn('JSON 파싱 실패, 기본 응답으로 처리:', firstParseError);
+            // JSON이 아닌 일반 텍스트인 경우 직접 사용
+            console.warn('JSON 파싱 실패, 일반 텍스트로 처리:', firstParseError);
+            console.log('일반 텍스트 내용:', cleanResult);
+            
+            // 일반 텍스트를 summary로 직접 사용
             summaryData = {
-              summary: `## 제안개요
-- 분석 결과를 정리 중입니다.
-
-## 원본 응답
-${cleanResult.substring(0, 300)}...`
+              summary: cleanResult
             };
           }
           
