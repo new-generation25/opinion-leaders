@@ -419,12 +419,13 @@ ${data && data.result && typeof data.result === 'string' ? data.result.substring
               <li><a href="#dashboard">의견 대시보드</a></li>
               <li><a href="#about">소개</a></li>
               <li><a href="#contact">연락처</a></li>
+              {/* 로그인 기능 임시 비활성화
               <li className="auth-nav">
-                {/* Removed session and status checks */}
                 <button onClick={() => router.push('/auth/signin')} className="login-btn">
                   로그인
                 </button>
               </li>
+              */}
             </ul>
           </div>
         </nav>
