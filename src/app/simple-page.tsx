@@ -50,20 +50,7 @@ export default function SimplePage() {
         { id: 4, topic: '로컬콘텐츠 개발 및 사업화', content: '지역 특색을 살린 콘텐츠 개발과 수익모델 창출 지원이 필요합니다.', author: '최콘텐츠', timestamp: '2024-01-15 12:45', isAutoClassified: true },
         { id: 5, topic: '문화공간 및 인프라', content: '지역문화 활동을 위한 공간 확보와 인프라 구축이 시급합니다.', author: '정공간', timestamp: '2024-01-15 13:10', isAutoClassified: false },
         { id: 6, topic: '지역사회 문화 파트너십', content: '지역사회와 문화 활동가들 간의 협력체계 강화가 필요합니다.', author: '강파트너십', timestamp: '2024-01-15 14:25', isAutoClassified: true },
-        { id: 7, topic: '정책 결정 과정 및 민관 협력', content: '문화정책 결정 과정에 활동가들의 참여 확대가 필요합니다.', author: '윤정책', timestamp: '2024-01-15 15:40', isAutoClassified: false },
-        { id: 8, topic: '지역문화 활동가 역량강화', content: '활동가들의 리더십과 기획 능력 향상을 위한 멘토링 제도가 필요합니다.', author: '조역량', timestamp: '2024-01-15 16:20', isAutoClassified: true },
-        { id: 9, topic: '네트워킹 및 아카이빙 플랫폼', content: '지역별 문화 활동 성과를 체계적으로 기록하고 공유할 플랫폼이 필요합니다.', author: '임아카이빙', timestamp: '2024-01-15 17:05', isAutoClassified: false },
-        { id: 10, topic: '활동가 활동환경 및 제도', content: '활동가들의 처우 개선과 지속가능한 활동을 위한 제도적 보장이 필요합니다.', author: '한환경', timestamp: '2024-01-15 18:30', isAutoClassified: true },
-        { id: 11, topic: '로컬콘텐츠 개발 및 사업화', content: '지역 고유의 문화자원을 활용한 창의적 콘텐츠 개발 지원이 필요합니다.', author: '백개발', timestamp: '2024-01-16 09:15', isAutoClassified: false },
-        { id: 12, topic: '문화공간 및 인프라', content: '폐교나 유휴시설을 활용한 문화공간 조성 사업 확대가 필요합니다.', author: '노인프라', timestamp: '2024-01-16 10:45', isAutoClassified: true },
-        { id: 13, topic: '지역사회 문화 파트너십', content: '지역 기업과 문화 활동가들 간의 상생 협력 모델 개발이 필요합니다.', author: '유협력', timestamp: '2024-01-16 11:55', isAutoClassified: false },
-        { id: 14, topic: '정책 결정 과정 및 민관 협력', content: '문화정책 수립 시 현장 활동가들의 의견 수렴 체계 구축이 필요합니다.', author: '송민관', timestamp: '2024-01-16 13:20', isAutoClassified: true },
-        { id: 15, topic: '지역문화 활동가 역량강화', content: '디지털 기술 활용 능력 향상을 위한 교육 프로그램이 필요합니다.', author: '전디지털', timestamp: '2024-01-16 14:10', isAutoClassified: false },
-        { id: 16, topic: '네트워킹 및 아카이빙 플랫폼', content: '전국 문화 활동가들의 경험과 노하우를 공유할 온라인 플랫폼이 필요합니다.', author: '홍공유', timestamp: '2024-01-16 15:35', isAutoClassified: true },
-        { id: 17, topic: '활동가 활동환경 및 제도', content: '문화 활동가들의 사회보장 제도 확대가 시급합니다.', author: '문보장', timestamp: '2024-01-16 16:50', isAutoClassified: false },
-        { id: 18, topic: '로컬콘텐츠 개발 및 사업화', content: '지역문화 콘텐츠의 상업화를 위한 마케팅 지원이 필요합니다.', author: '장마케팅', timestamp: '2024-01-16 17:25', isAutoClassified: true },
-        { id: 19, topic: '문화공간 및 인프라', content: '문화 활동을 위한 장비 대여 시스템 구축이 필요합니다.', author: '표장비', timestamp: '2024-01-16 18:40', isAutoClassified: false },
-        { id: 20, topic: '지역사회 문화 파트너십', content: '지역축제와 문화행사의 지속가능한 운영 모델 개발이 필요합니다.', author: '남지속가능', timestamp: '2024-01-16 19:15', isAutoClassified: true }
+        { id: 7, topic: '정책 결정 과정 및 민관 협력', content: '문화정책 결정 과정에 활동가들의 참여 확대가 필요합니다.', author: '윤정책', timestamp: '2024-01-15 15:40', isAutoClassified: false }
       ];
       
       setOpinions(dummyOpinions);
@@ -298,7 +285,7 @@ export default function SimplePage() {
                         onChange={(e) => setSelectedTopic(e.target.value)}
                         required
                       >
-                        <option value="">주제를 선택하세요</option>
+                        <option value="" disabled hidden>주제를 선택하세요</option>
                         <option value="지역문화 활동가 역량강화">지역문화 활동가 역량강화</option>
                         <option value="네트워킹 및 아카이빙 플랫폼">네트워킹 및 아카이빙 플랫폼</option>
                         <option value="활동가 활동환경 및 제도">활동가 활동환경 및 제도</option>
@@ -533,4 +520,4 @@ export default function SimplePage() {
       )}
     </div>
   );
-} 
+}
